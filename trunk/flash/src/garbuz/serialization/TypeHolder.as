@@ -1,16 +1,17 @@
 package garbuz.serialization
 {
+	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 
-	internal class TypeInfo
+	internal class TypeHolder
 	{
 		public var index:int;
 		public var className:String;
 		public var classRef:Class;
-		public var properties:Array;
+		public var properties:Array = [];
 		public var initialized:Boolean = false;
 
-		public function TypeInfo(index:int, className:String)
+		public function TypeHolder(index:int, className:String)
 		{
 			this.index = index;
 			this.className = className;
@@ -25,6 +26,16 @@ package garbuz.serialization
 
 		private function resolveProperties():void
 		{
+			var description:XML = describeType(classRef);
+			var variables:XMLList = description.factory.variable;
+
+			for each (var variable:XML in variables)
+			{
+				var property:String = variable.@name;
+				properties.push(property);
+			}
+
+			properties.sortOn("name");
 		}
 	}
 }

@@ -8,14 +8,29 @@ package garbuz.serialization
 
 		public function Decoder()
 		{
-			_decodeMethods[Types.T_NULL] = decodeNull;
 			_decodeMethods[Types.T_INT] = decodeInt;
 			_decodeMethods[Types.T_DOUBLE] = decodeDouble;
 			_decodeMethods[Types.T_STRING] = decodeString;
 			_decodeMethods[Types.T_TRUE] = decodeTrue;
 			_decodeMethods[Types.T_FALSE] = decodeFalse;
-			_decodeMethods[Types.T_DATE] = decodeDate;
 			_decodeMethods[Types.T_ARRAY] = decodeArray;
+			_decodeMethods[Types.T_DATE] = decodeDate;
+			_decodeMethods[Types.T_NULL] = decodeNull;
+			_decodeMethods[Types.T_OBJECT] = decodeTypedObject;
+		}
+
+		private function decodeTypedObject(bytes:ByteArray):Object
+		{
+			var typeIndex:uint = bytes.readShort();
+			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
+			var object:Object = new (type.classRef)();
+
+			for each (var property:String in type.properties)
+			{
+				object[property] = decodeValue(bytes);
+			}
+
+			return object;
 		}
 
 		public function decode(bytes:ByteArray):Object

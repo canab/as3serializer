@@ -28,40 +28,32 @@ package garbuz.serialization
 			if (!(qualifiedName in _typesByName))
 			{
 				var index:int = _typesByIndex.length;
-				var typeInfo:TypeInfo = new TypeInfo(index, qualifiedName);
+				var typeInfo:TypeHolder = new TypeHolder(index, qualifiedName);
 
 				_typesByName[qualifiedName] = typeInfo;
 				_typesByIndex[index] = typeInfo;
 			}
 		}
 
-		internal static function getTypeInfo(type:Class):TypeInfo
+		internal static function getTypeByName(qualifiedName:String):TypeHolder
 		{
-			var info:TypeInfo = _typesByClass[type];
+			var type:TypeHolder = _typesByName[qualifiedName];
 
-			if (!info)
-			{
-				info = _typesByName[getQualifiedClassName(type)];
-				initializeTypeInfo(info);
-			}
+			if (!type.initialized)
+				type.initialize();
 
-			return info;
+			return type;
 		}
 
-		internal static function getTypeInfoByIndex(typeIndex:int):TypeInfo
+		internal static function getTypeByIndex(typeIndex:int):TypeHolder
 		{
-			var info:TypeInfo = _typesByIndex[typeIndex];
+			var type:TypeHolder = _typesByIndex[typeIndex];
 
-			if (!info.initialized)
-				initializeTypeInfo(info);
+			if (!type.initialized)
+				type.initialize();
 
-			return info;
+			return type;
 		}
 
-		private static function initializeTypeInfo(info:TypeInfo):void
-		{
-			info.initialize();
-			_typesByClass[info.classRef] = info;
-		}
 	}
 }
