@@ -15,17 +15,35 @@ package garbuz.serialization
 			_decodeMethods[Types.T_TRUE] = decodeTrue;
 			_decodeMethods[Types.T_FALSE] = decodeFalse;
 			_decodeMethods[Types.T_DATE] = decodeDate;
+			_decodeMethods[Types.T_ARRAY] = decodeArray;
 		}
 
 		public function decode(bytes:ByteArray):Object
 		{
 			bytes.position = 0;
+			var value:Object = decodeValue(bytes);
+			return value;
+		}
 
+		private function decodeValue(bytes:ByteArray):Object
+		{
 			var type:int = bytes.readByte();
 			var method:Function = _decodeMethods[type];
 			var value:Object = method(bytes);
-
 			return value;
+		}
+
+		private function decodeArray(bytes:ByteArray):Array
+		{
+			var length:uint = bytes.readUnsignedInt();
+			var array:Array = [];
+
+			for (var i:int = 0; i < length; i++)
+			{
+				array.push(decodeValue(bytes));
+			}
+
+			return array;
 		}
 
 		//noinspection JSUnusedLocalSymbols
@@ -67,5 +85,6 @@ package garbuz.serialization
 			date.time = bytes.readDouble();
 			return date;
 		}
+
 	}
 }
