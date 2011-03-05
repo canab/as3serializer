@@ -6,7 +6,8 @@ package garbuz.serialization.test
 	{
 		public function AllTests()
 		{
-			addTest(new TestSimpleValues());
+			addTest(new SimpleTypesTest());
+			addTest(new ArrayTest());
 		}
 	}
 }

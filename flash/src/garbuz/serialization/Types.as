@@ -9,6 +9,7 @@ package garbuz.serialization
 		public static const T_TRUE:int = getValue();
 		public static const T_FALSE:int = getValue();
 		public static const T_DATE:int = getValue();
+		public static const T_ARRAY:int = getValue();
 
 		private static var _currentValue:int = 0;
 
