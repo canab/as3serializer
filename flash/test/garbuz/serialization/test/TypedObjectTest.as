@@ -30,7 +30,7 @@ package garbuz.serialization.test
 			assertEquals(object.numberValue, result.numberValue);
 			assertEquals(object.boolValue, result.boolValue);
 			assertEquals(object.stringValue, result.stringValue);
-			assertEquals(object.dateValue, result.dateValue);
+			assertEquals(object.dateValue.time, result.dateValue.time);
 			assertEqualsArrays(object.arrayValue, result.arrayValue);
 		}
 	}

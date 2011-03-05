@@ -1,6 +1,7 @@
 package garbuz.serialization
 {
 	import flash.utils.ByteArray;
+	import flash.utils.getQualifiedClassName;
 
 	internal class Encoder
 	{
@@ -44,8 +45,18 @@ package garbuz.serialization
 				encodeTypedObject(bytes, value);
 		}
 
-		private function encodeTypedObject(bytes:ByteArray, value:Object):void
+		private function encodeTypedObject(bytes:ByteArray, object:Object):void
 		{
+			var typeName:String = getQualifiedClassName(object);
+			var type:TypeHolder = Serializer.getTypeByName(typeName);
+
+			bytes.writeByte(Types.T_OBJECT);
+			bytes.writeShort(type.index);
+
+			for each (var property:String in type.properties)
+			{
+				encodeValue(bytes, object[property]);
+			}
 		}
 
 		private function encodeArray(bytes:ByteArray, array:Array):void
