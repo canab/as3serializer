@@ -1,8 +1,6 @@
 package garbuz.serialization
 {
 	import flash.utils.ByteArray;
-	import flash.utils.Dictionary;
-	import flash.utils.getQualifiedClassName;
 
 	public class Serializer
 	{
@@ -11,7 +9,6 @@ package garbuz.serialization
 
 		private static var _typesByName:Object = {};
 		private static var _typesByIndex:Array = [];
-		private static var _typesByClass:Dictionary = new Dictionary();
 
 		public static function encode(value:Object):ByteArray
 		{

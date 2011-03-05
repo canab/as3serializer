@@ -15,13 +15,37 @@ package garbuz.serialization.test
 			Serializer.registerType(getQualifiedClassName(TestObject));
 		}
 
-		public function test1():void
+		public function testObject():void
 		{
 			var object:TestObject = new TestObject();
 			var bytes:ByteArray = Serializer.encode(object);
 			var result:TestObject = TestObject(Serializer.decode(bytes));
 
 			checkObject(object, result);
+		}
+
+		public function testObjectWithNulls():void
+		{
+			var object:TestObject = new TestObject();
+			object.stringValue = null;
+			var bytes:ByteArray = Serializer.encode(object);
+			var result:TestObject = TestObject(Serializer.decode(bytes));
+
+			checkObject(object, result);
+		}
+
+		public function testNestedObject():void
+		{
+			var object1:TestObject = new TestObject();
+			object1.arrayValue = [[Math.PI]];
+
+			var object2:TestObject = new TestObject();
+			object2.arrayValue = [[object1]];
+
+			var bytes:ByteArray = Serializer.encode(object2);
+			var result:TestObject = TestObject(Serializer.decode(bytes));
+
+			assertEquals(result.arrayValue[0][0].arrayValue[0][0], Math.PI);
 		}
 
 		private function checkObject(object:TestObject, result:TestObject):void
