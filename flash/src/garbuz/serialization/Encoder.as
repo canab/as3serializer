@@ -44,6 +44,10 @@ package garbuz.serialization
 				encodeTypedObject(bytes, value);
 		}
 
+		private function encodeTypedObject(bytes:ByteArray, value:Object):void
+		{
+		}
+
 		private function encodeArray(bytes:ByteArray, array:Array):void
 		{
 			var length:uint = array.length;
@@ -55,10 +59,6 @@ package garbuz.serialization
 			{
 				encodeValue(bytes, array[i]);
 			}
-		}
-
-		private function encodeTypedObject(bytes:ByteArray, value:Object):void
-		{
 		}
 
 		private function encodeNumber(bytes:ByteArray, value:Number):void

@@ -8,6 +8,7 @@ package garbuz.serialization.test
 		{
 			addTest(new SimpleTypesTest());
 			addTest(new ArrayTest());
+			addTest(new TypedObjectTest());
 		}
 	}
 }
