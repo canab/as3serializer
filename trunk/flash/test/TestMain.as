@@ -4,7 +4,7 @@ package
 
 	import flash.display.Sprite;
 
-	import LocalSuite;
+	import localTests.LocalSuite;
 
 	[SWF(width=800, height=480)]
 	public class TestMain extends Sprite

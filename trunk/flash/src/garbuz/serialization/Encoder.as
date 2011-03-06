@@ -5,14 +5,14 @@ package garbuz.serialization
 
 	internal class Encoder
 	{
-		private var _encodeMethods:Array = [];
+		private static var _encodeMethods:Object = {};
 
 		public function Encoder()
 		{
-			_encodeMethods["number"] = encodeNumber;
-			_encodeMethods["object"] = encodeObject;
 			_encodeMethods["string"] = encodeString;
+			_encodeMethods["number"] = encodeNumber;
 			_encodeMethods["boolean"] = encodeBoolean;
+			_encodeMethods["object"] = encodeObject;
 		}
 
 		public function encode(value:Object):ByteArray
@@ -33,21 +33,59 @@ package garbuz.serialization
 			method(bytes, value);
 		}
 
-		private function encodeObject(bytes:ByteArray, value:Object):void
+		private function encodeNumber(bytes:ByteArray, value:Number):void
 		{
-			if (value == null)
-				encodeNull(bytes);
-			else if (value is Date)
-				encodeDate(bytes, value as Date);
-			else if (value is Array)
-				encodeArray(bytes, value as Array);
+			if (value is int)
+				encodeInt(bytes, value as int);
 			else
-				encodeTypedObject(bytes, value);
+				encodeDouble(bytes, value as Number);
 		}
 
-		private function encodeTypedObject(bytes:ByteArray, object:Object):void
+		private function encodeObject(bytes:ByteArray, object:Object):void
 		{
-			var typeName:String = getQualifiedClassName(object);
+			if (object == null)
+			{
+				encodeNull(bytes);
+			}
+			else if (object is Date)
+			{
+				encodeDate(bytes, object as Date);
+			}
+			else if (object is Array)
+			{
+				encodeArray(bytes, object as Array);
+			}
+			else
+			{
+				var typeName:String = getQualifiedClassName(object);
+
+				if (typeName == "Object")
+					encodeMap(bytes, object);
+				else
+					encodeTypedObject(bytes, object, typeName);
+			}
+		}
+
+		private function encodeMap(bytes:ByteArray, object:Object):void
+		{
+			var properties:Array = [];
+			for (var property:String in object)
+			{
+				properties.push(property);
+			}
+
+			bytes.writeByte(Types.T_MAP);
+			bytes.writeUnsignedInt(properties.length);
+
+			for each (property in properties)
+			{
+				bytes.writeUTF(property);
+				encodeValue(bytes, object[property]);
+			}
+		}
+
+		private function encodeTypedObject(bytes:ByteArray, object:Object, typeName:String):void
+		{
 			var type:TypeHolder = Serializer.getTypeByName(typeName);
 
 			bytes.writeByte(Types.T_OBJECT);
@@ -72,18 +110,10 @@ package garbuz.serialization
 			}
 		}
 
-		private function encodeNumber(bytes:ByteArray, value:Number):void
-		{
-			if (value is int)
-				encodeInt(bytes, value);
-			else
-				encodeDouble(bytes, value);
-		}
-
-		private function encodeInt(bytes:ByteArray, value:Object):void
+		private function encodeInt(bytes:ByteArray, value:int):void
 		{
 			bytes.writeByte(Types.T_INT);
-			bytes.writeInt(int(value))
+			bytes.writeInt(value)
 		}
 
 		private function encodeDouble(bytes:ByteArray, value:Number):void
@@ -95,13 +125,13 @@ package garbuz.serialization
 			bytes.writeDouble(Number(value))
 		}
 
-		private function encodeString(bytes:ByteArray, value:Object):void
+		private function encodeString(bytes:ByteArray, value:String):void
 		{
 			bytes.writeByte(Types.T_STRING);
 			bytes.writeUTF(String(value));
 		}
 
-		private function encodeBoolean(bytes:ByteArray, value:Object):void
+		private function encodeBoolean(bytes:ByteArray, value:Boolean):void
 		{
 			bytes.writeByte(value ? Types.T_TRUE : Types.T_FALSE);
 		}
@@ -112,10 +142,10 @@ package garbuz.serialization
 			bytes.writeDouble(value.time);
 		}
 
-		//noinspection JSUnusedLocalSymbols
-		private function encodeNull(bytes:ByteArray, value:Object = null):void
+		private function encodeNull(bytes:ByteArray):void
 		{
 			bytes.writeByte(Types.T_NULL);
 		}
+
 	}
 }

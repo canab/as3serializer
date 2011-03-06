@@ -14,6 +14,7 @@ package garbuz.serialization
 			_decodeMethods[Types.T_TRUE] = decodeTrue;
 			_decodeMethods[Types.T_FALSE] = decodeFalse;
 			_decodeMethods[Types.T_ARRAY] = decodeArray;
+			_decodeMethods[Types.T_MAP] = decodeMap;
 			_decodeMethods[Types.T_DATE] = decodeDate;
 			_decodeMethods[Types.T_NULL] = decodeNull;
 			_decodeMethods[Types.T_OBJECT] = decodeTypedObject;
@@ -28,6 +29,21 @@ package garbuz.serialization
 			for each (var property:String in type.properties)
 			{
 				object[property] = decodeValue(bytes);
+			}
+
+			return object;
+		}
+
+		private function decodeMap(bytes:ByteArray):Object
+		{
+			var object:Object = {};
+			var propCount:uint = bytes.readUnsignedInt();
+
+			for (var i:int = 0; i < propCount; i++)
+			{
+				var propName:String = decodeString(bytes);
+				var propValue:Object = decodeValue(bytes);
+				object[propName] = propValue;
 			}
 
 			return object;
