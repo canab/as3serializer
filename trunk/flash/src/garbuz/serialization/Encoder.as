@@ -41,6 +41,27 @@ package garbuz.serialization
 				encodeDouble(bytes, value as Number);
 		}
 
+		private function encodeInt(bytes:ByteArray, value:int):void
+		{
+			bytes.writeByte(Types.T_INT);
+			bytes.writeInt(value)
+		}
+
+		private function encodeDouble(bytes:ByteArray, value:Number):void
+		{
+			if (isNaN(value))
+				throw new Error("Cannot serialize NaN");
+
+			bytes.writeByte(Types.T_DOUBLE);
+			bytes.writeDouble(Number(value))
+		}
+
+		private function encodeString(bytes:ByteArray, value:String):void
+		{
+			bytes.writeByte(Types.T_STRING);
+			bytes.writeUTF(String(value));
+		}
+
 		private function encodeObject(bytes:ByteArray, object:Object):void
 		{
 			if (object == null)
@@ -108,27 +129,6 @@ package garbuz.serialization
 			{
 				encodeValue(bytes, array[i]);
 			}
-		}
-
-		private function encodeInt(bytes:ByteArray, value:int):void
-		{
-			bytes.writeByte(Types.T_INT);
-			bytes.writeInt(value)
-		}
-
-		private function encodeDouble(bytes:ByteArray, value:Number):void
-		{
-			if (isNaN(value))
-				throw new Error("Cannot serialize NaN");
-
-			bytes.writeByte(Types.T_DOUBLE);
-			bytes.writeDouble(Number(value))
-		}
-
-		private function encodeString(bytes:ByteArray, value:String):void
-		{
-			bytes.writeByte(Types.T_STRING);
-			bytes.writeUTF(String(value));
 		}
 
 		private function encodeBoolean(bytes:ByteArray, value:Boolean):void

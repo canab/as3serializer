@@ -20,18 +20,19 @@ package garbuz.serialization
 			_decodeMethods[Types.T_OBJECT] = decodeTypedObject;
 		}
 
-		private function decodeTypedObject(bytes:ByteArray):Object
+		public function decode(bytes:ByteArray):Object
 		{
-			var typeIndex:uint = bytes.readShort();
-			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
-			var object:Object = new (type.classRef)();
+			bytes.position = 0;
+			var value:Object = decodeValue(bytes);
+			return value;
+		}
 
-			for each (var property:String in type.properties)
-			{
-				object[property] = decodeValue(bytes);
-			}
-
-			return object;
+		private function decodeValue(bytes:ByteArray):Object
+		{
+			var type:int = bytes.readByte();
+			var method:Function = _decodeMethods[type];
+			var value:Object = method(bytes);
+			return value;
 		}
 
 		private function decodeMap(bytes:ByteArray):Object
@@ -49,19 +50,18 @@ package garbuz.serialization
 			return object;
 		}
 
-		public function decode(bytes:ByteArray):Object
+		private function decodeTypedObject(bytes:ByteArray):Object
 		{
-			bytes.position = 0;
-			var value:Object = decodeValue(bytes);
-			return value;
-		}
+			var typeIndex:uint = bytes.readShort();
+			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
+			var object:Object = new (type.classRef)();
 
-		private function decodeValue(bytes:ByteArray):Object
-		{
-			var type:int = bytes.readByte();
-			var method:Function = _decodeMethods[type];
-			var value:Object = method(bytes);
-			return value;
+			for each (var property:String in type.properties)
+			{
+				object[property] = decodeValue(bytes);
+			}
+
+			return object;
 		}
 
 		private function decodeArray(bytes:ByteArray):Array
