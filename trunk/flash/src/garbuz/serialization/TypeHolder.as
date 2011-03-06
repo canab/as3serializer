@@ -35,7 +35,7 @@ package garbuz.serialization
 				properties.push(property);
 			}
 
-			properties.sortOn("name");
+			properties.sort();
 		}
 	}
 }

@@ -1,15 +1,11 @@
 package localTests
 {
-	import asunit.framework.TestSuite;
-
-	public class LocalSuite extends TestSuite
+	[Suite]
+	[RunWith("org.flexunit.runners.Suite")]
+	public class LocalSuite
 	{
-		public function LocalSuite()
-		{
-			addTest(new SimpleTypesTest());
-			addTest(new ArrayTest());
-			addTest(new TypedObjectTest());
-			addTest(new MapTest());
-		}
+		public var test1:SimpleTypesTest;
+		public var test2:CollectionsTest;
+		public var test3:ObjectTest;
 	}
 }
