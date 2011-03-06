@@ -26,11 +26,6 @@ package localTests
 			testValue(Number.MIN_VALUE);
 			testValue(Number.NEGATIVE_INFINITY);
 			testValue(Number.POSITIVE_INFINITY);
-		}
-
-		[Test(expects="Error")]
-		public function testNaN():void
-		{
 			testValue(Number.NaN);
 		}
 
@@ -51,18 +46,18 @@ package localTests
 		}
 
 		[Test]
+		public function testNull():void
+		{
+			testValue(null);
+		}
+
+		[Test]
 		public function testDate():void
 		{
 			var date:Date = new Date();
 			var bytes:ByteArray = Serializer.encode(date);
 			var decodedValue:Date = Serializer.decode(bytes) as Date;
 			deepCompare(date.time, decodedValue.time);
-		}
-
-		[Test]
-		public function testNull():void
-		{
-			testValue(null);
 		}
 	}
 }

@@ -35,54 +35,6 @@ package garbuz.serialization
 			return value;
 		}
 
-		private function decodeMap(bytes:ByteArray):Object
-		{
-			var object:Object = {};
-			var propCount:uint = bytes.readUnsignedInt();
-
-			for (var i:int = 0; i < propCount; i++)
-			{
-				var propName:String = decodeString(bytes);
-				var propValue:Object = decodeValue(bytes);
-				object[propName] = propValue;
-			}
-
-			return object;
-		}
-
-		private function decodeTypedObject(bytes:ByteArray):Object
-		{
-			var typeIndex:uint = bytes.readShort();
-			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
-			var object:Object = new (type.classRef)();
-
-			for each (var property:String in type.properties)
-			{
-				object[property] = decodeValue(bytes);
-			}
-
-			return object;
-		}
-
-		private function decodeArray(bytes:ByteArray):Array
-		{
-			var length:uint = bytes.readUnsignedInt();
-			var array:Array = [];
-
-			for (var i:int = 0; i < length; i++)
-			{
-				array.push(decodeValue(bytes));
-			}
-
-			return array;
-		}
-
-		//noinspection JSUnusedLocalSymbols
-		private function decodeNull(bytes:ByteArray):Object
-		{
-			return null;
-		}
-
 		private function decodeInt(bytes:ByteArray):int
 		{
 			return bytes.readInt();
@@ -110,11 +62,59 @@ package garbuz.serialization
 			return false;
 		}
 
+		//noinspection JSUnusedLocalSymbols
+		private function decodeNull(bytes:ByteArray):Object
+		{
+			return null;
+		}
+
+		private function decodeArray(bytes:ByteArray):Array
+		{
+			var length:uint = bytes.readUnsignedInt();
+			var array:Array = [];
+
+			for (var i:int = 0; i < length; i++)
+			{
+				array.push(decodeValue(bytes));
+			}
+
+			return array;
+		}
+
+		private function decodeMap(bytes:ByteArray):Object
+		{
+			var object:Object = {};
+			var propCount:uint = bytes.readUnsignedInt();
+
+			for (var i:int = 0; i < propCount; i++)
+			{
+				var propName:String = decodeString(bytes);
+				var propValue:Object = decodeValue(bytes);
+				object[propName] = propValue;
+			}
+
+			return object;
+		}
+
 		private function decodeDate(bytes:ByteArray):Date
 		{
 			var date:Date = new Date();
 			date.time = bytes.readDouble();
 			return date;
+		}
+
+		private function decodeTypedObject(bytes:ByteArray):Object
+		{
+			var typeIndex:uint = bytes.readShort();
+			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
+			var object:Object = new (type.classRef)();
+
+			for each (var property:String in type.properties)
+			{
+				object[property] = decodeValue(bytes);
+			}
+
+			return object;
 		}
 
 	}

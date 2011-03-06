@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class SimpleTypesTest
 {
@@ -28,11 +29,6 @@ public class SimpleTypesTest
 		testValue(Double.MIN_VALUE);
 		testValue(Double.NEGATIVE_INFINITY);
 		testValue(Double.POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testNaN() throws IOException
-	{
 		testValue(Double.NaN);
 	}
 
@@ -43,6 +39,25 @@ public class SimpleTypesTest
 		testValue("qwerty");
 		testValue("йцукен");
 		testValue("qwertyйцукен");
+	}
+
+	@Test
+	public void testBoolean() throws IOException
+	{
+		testValue(true);
+		testValue(false);
+	}
+
+	@Test
+	public void testNull() throws IOException
+	{
+		testValue(null);
+	}
+
+	@Test
+	public void testDate() throws IOException
+	{
+		testValue(new Date());
 	}
 
 	protected void testValue(Object value) throws IOException

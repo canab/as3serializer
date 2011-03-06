@@ -3,6 +3,7 @@ package garbuz.serialization;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Date;
 
 public class Decoder
 {
@@ -31,6 +32,18 @@ public class Decoder
 			case Types.T_STRING:
 				value = decodeString(objectStream);
 				break;
+			case Types.T_TRUE:
+				value = true;
+				break;
+			case Types.T_FALSE:
+				value = false;
+				break;
+			case Types.T_NULL:
+				value = null;
+				break;
+			case Types.T_DATE:
+				value = decodeDate(objectStream);
+				break;
 		}
 
 		return value;
@@ -49,5 +62,11 @@ public class Decoder
 	private Object decodeString(ObjectInputStream objectStream) throws IOException
 	{
 		return objectStream.readUTF();
+	}
+
+	private Object decodeDate(ObjectInputStream objectStream) throws IOException
+	{
+		long time = ((Double)objectStream.readDouble()).longValue();
+		return new Date(time);
 	}
 }
