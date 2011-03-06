@@ -1,4 +1,4 @@
-package garbuz.serialization.test
+package localTests
 {
 	import asunit.framework.TestCase;
 

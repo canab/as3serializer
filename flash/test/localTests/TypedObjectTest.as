@@ -1,6 +1,8 @@
-package garbuz.serialization.test
+package localTests
 {
 	import asunit.framework.TestCase;
+
+	import data.SampleObject;
 
 	import flash.utils.ByteArray;
 
@@ -12,43 +14,43 @@ package garbuz.serialization.test
 	{
 		override protected function setUp():void
 		{
-			Serializer.registerType(getQualifiedClassName(TestObject));
+			Serializer.registerType(getQualifiedClassName(SampleObject));
 		}
 
 		public function testObject():void
 		{
-			var object:TestObject = new TestObject();
+			var object:SampleObject = new SampleObject();
 			var bytes:ByteArray = Serializer.encode(object);
-			var result:TestObject = TestObject(Serializer.decode(bytes));
+			var result:SampleObject = SampleObject(Serializer.decode(bytes));
 
 			checkObject(object, result);
 		}
 
 		public function testObjectWithNulls():void
 		{
-			var object:TestObject = new TestObject();
+			var object:SampleObject = new SampleObject();
 			object.stringValue = null;
 			var bytes:ByteArray = Serializer.encode(object);
-			var result:TestObject = TestObject(Serializer.decode(bytes));
+			var result:SampleObject = SampleObject(Serializer.decode(bytes));
 
 			checkObject(object, result);
 		}
 
 		public function testNestedObject():void
 		{
-			var object1:TestObject = new TestObject();
+			var object1:SampleObject = new SampleObject();
 			object1.arrayValue = [[Math.PI]];
 
-			var object2:TestObject = new TestObject();
+			var object2:SampleObject = new SampleObject();
 			object2.arrayValue = [[object1]];
 
 			var bytes:ByteArray = Serializer.encode(object2);
-			var result:TestObject = TestObject(Serializer.decode(bytes));
+			var result:SampleObject = SampleObject(Serializer.decode(bytes));
 
 			assertEquals(result.arrayValue[0][0].arrayValue[0][0], Math.PI);
 		}
 
-		private function checkObject(object:TestObject, result:TestObject):void
+		private function checkObject(object:SampleObject, result:SampleObject):void
 		{
 			assertEquals(object.intValue, result.intValue);
 			assertEquals(object.numberValue, result.numberValue);

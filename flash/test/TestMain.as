@@ -4,7 +4,7 @@ package
 
 	import flash.display.Sprite;
 
-	import garbuz.serialization.test.AllTests;
+	import LocalSuite;
 
 	[SWF(width=800, height=480)]
 	public class TestMain extends Sprite
@@ -13,7 +13,7 @@ package
 		{
 			var testRunner:TestRunner = new TestRunner();
 			stage.addChild(testRunner);
-			testRunner.start(AllTests, null, false)
+			testRunner.start(LocalSuite, null, false)
 		}
 	}
 }
