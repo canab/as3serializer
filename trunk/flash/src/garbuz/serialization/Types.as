@@ -2,22 +2,15 @@ package garbuz.serialization
 {
 	internal class Types
 	{
-		public static const T_INT:int = getValue();
-		public static const T_DOUBLE:int = getValue();
-		public static const T_STRING:int = getValue();
-		public static const T_TRUE:int = getValue();
-		public static const T_FALSE:int = getValue();
-		public static const T_NULL:int = getValue();
-		public static const T_ARRAY:int = getValue();
-		public static const T_MAP:int = getValue();
-		public static const T_DATE:int = getValue();
-		public static const T_OBJECT:int = getValue();
-
-		private static var _currentValue:int = 0;
-
-		private static function getValue():int
-		{
-			return _currentValue++;
-		}
+		public static const T_INT:int = 0;
+		public static const T_DOUBLE:int = 1;
+		public static const T_STRING:int = 2;
+		public static const T_TRUE:int = 3;
+		public static const T_FALSE:int = 4;
+		public static const T_NULL:int = 5;
+		public static const T_ARRAY:int = 6;
+		public static const T_MAP:int = 7;
+		public static const T_DATE:int = 8;
+		public static const T_OBJECT:int = 9;
 	}
 }

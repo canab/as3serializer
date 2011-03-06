@@ -7,6 +7,7 @@ package data
 		public var boolValue:Boolean = false;
 		public var stringValue:String = "qwertyéöóêåí";
 		public var dateValue:Date = new Date();
-		public var arrayValue:Array = [intValue, boolValue, stringValue]
+		public var arrayValue:Array = [intValue, boolValue, stringValue];
+		public var mapValue:Object = {1: arrayValue};
 	}
 }

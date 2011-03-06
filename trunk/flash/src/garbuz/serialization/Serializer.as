@@ -25,10 +25,10 @@ package garbuz.serialization
 			if (!(qualifiedName in _typesByName))
 			{
 				var index:int = _typesByIndex.length;
-				var typeInfo:TypeHolder = new TypeHolder(index, qualifiedName);
+				var type:TypeHolder = new TypeHolder(index, qualifiedName);
 
-				_typesByName[qualifiedName] = typeInfo;
-				_typesByIndex[index] = typeInfo;
+				_typesByName[qualifiedName] = type;
+				_typesByIndex[index] = type;
 			}
 		}
 
