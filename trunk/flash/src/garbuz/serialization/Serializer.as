@@ -36,6 +36,9 @@ package garbuz.serialization
 		{
 			var type:TypeHolder = _typesByName[qualifiedName];
 
+			if (!type)
+				throw new Error("Type " + qualifiedName + " is not registered");
+
 			if (!type.initialized)
 				type.initialize();
 

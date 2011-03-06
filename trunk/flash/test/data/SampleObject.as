@@ -1,6 +1,6 @@
-package garbuz.serialization.test
+package data
 {
-	public class TestObject
+	public class SampleObject
 	{
 		public var intValue:int = -1;
 		public var numberValue:int = -1;
