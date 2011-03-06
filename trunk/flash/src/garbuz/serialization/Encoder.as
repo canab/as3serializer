@@ -49,9 +49,6 @@ package garbuz.serialization
 
 		private function encodeDouble(bytes:ByteArray, value:Number):void
 		{
-			if (isNaN(value))
-				throw new Error("Cannot serialize NaN");
-
 			bytes.writeByte(Types.T_DOUBLE);
 			bytes.writeDouble(Number(value))
 		}
@@ -60,6 +57,42 @@ package garbuz.serialization
 		{
 			bytes.writeByte(Types.T_STRING);
 			bytes.writeUTF(String(value));
+		}
+
+		private function encodeBoolean(bytes:ByteArray, value:Boolean):void
+		{
+			bytes.writeByte(value ? Types.T_TRUE : Types.T_FALSE);
+		}
+
+		private function encodeArray(bytes:ByteArray, array:Array):void
+		{
+			var length:uint = array.length;
+
+			bytes.writeByte(Types.T_ARRAY);
+			bytes.writeUnsignedInt(length);
+
+			for (var i:int = 0; i < length; i++)
+			{
+				encodeValue(bytes, array[i]);
+			}
+		}
+
+		private function encodeMap(bytes:ByteArray, object:Object):void
+		{
+			var properties:Array = [];
+			for (var property:String in object)
+			{
+				properties.push(property);
+			}
+
+			bytes.writeByte(Types.T_MAP);
+			bytes.writeUnsignedInt(properties.length);
+
+			for each (property in properties)
+			{
+				bytes.writeUTF(property);
+				encodeValue(bytes, object[property]);
+			}
 		}
 
 		private function encodeObject(bytes:ByteArray, object:Object):void
@@ -87,24 +120,6 @@ package garbuz.serialization
 			}
 		}
 
-		private function encodeMap(bytes:ByteArray, object:Object):void
-		{
-			var properties:Array = [];
-			for (var property:String in object)
-			{
-				properties.push(property);
-			}
-
-			bytes.writeByte(Types.T_MAP);
-			bytes.writeUnsignedInt(properties.length);
-
-			for each (property in properties)
-			{
-				bytes.writeUTF(property);
-				encodeValue(bytes, object[property]);
-			}
-		}
-
 		private function encodeTypedObject(bytes:ByteArray, object:Object, typeName:String):void
 		{
 			var type:TypeHolder = Serializer.getTypeByName(typeName);
@@ -116,24 +131,6 @@ package garbuz.serialization
 			{
 				encodeValue(bytes, object[property]);
 			}
-		}
-
-		private function encodeArray(bytes:ByteArray, array:Array):void
-		{
-			var length:uint = array.length;
-
-			bytes.writeByte(Types.T_ARRAY);
-			bytes.writeUnsignedInt(length);
-
-			for (var i:int = 0; i < length; i++)
-			{
-				encodeValue(bytes, array[i]);
-			}
-		}
-
-		private function encodeBoolean(bytes:ByteArray, value:Boolean):void
-		{
-			bytes.writeByte(value ? Types.T_TRUE : Types.T_FALSE);
 		}
 
 		private function encodeDate(bytes:ByteArray, value:Date):void

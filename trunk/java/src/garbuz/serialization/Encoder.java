@@ -3,6 +3,7 @@ package garbuz.serialization;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Date;
 
 @SuppressWarnings({"ConstantConditions"})
 final class Encoder
@@ -34,6 +35,18 @@ final class Encoder
 		{
 			encodeString(stream, (String) value);
 		}
+		else if ((value instanceof Boolean))
+		{
+			encodeBoolean(stream, (Boolean) value);
+		}
+		else if ((value instanceof Date))
+		{
+			encodeDate(stream, (Date) value);
+		}
+		else if (value == null)
+		{
+			encodeNull(stream);
+		}
 	}
 
 	private void encodeInteger(ObjectOutputStream stream, int value) throws IOException
@@ -52,6 +65,22 @@ final class Encoder
 	{
 		stream.writeByte(Types.T_STRING);
 		stream.writeUTF(value);
+	}
+
+	private void encodeBoolean(ObjectOutputStream stream, boolean value) throws IOException
+	{
+		stream.writeByte(value ? Types.T_TRUE : Types.T_FALSE);
+	}
+
+	private void encodeNull(ObjectOutputStream stream) throws IOException
+	{
+		stream.writeByte(Types.T_NULL);
+	}
+
+	private void encodeDate(ObjectOutputStream stream, Date value) throws IOException
+	{
+		stream.writeByte(Types.T_DATE);
+		stream.writeDouble(value.getTime());
 	}
 
 }
