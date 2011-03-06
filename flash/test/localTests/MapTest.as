@@ -3,7 +3,6 @@ package localTests
 	import asunit.framework.TestCase;
 
 	import data.SampleObject;
-	import data.SampleObject;
 
 	import flash.utils.ByteArray;
 
