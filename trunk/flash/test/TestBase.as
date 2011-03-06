@@ -157,7 +157,7 @@ package
 
 		private static function doFail(source:Object, target:Object):void
 		{
-			Assert.failNotEquals("Not equals.", source, target);
+			Assert.failNotEquals("Not equals:", source, target);
 		}
 	}
 }
