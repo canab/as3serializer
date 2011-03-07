@@ -146,7 +146,8 @@ final class Decoder
 
 		for (Field field : type.fields)
 		{
-			field.set(object, decodeValue(stream));
+			Object value = decodeValue(stream);
+			field.set(object, value);
 		}
 
 		return object;
