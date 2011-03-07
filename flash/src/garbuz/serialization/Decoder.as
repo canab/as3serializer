@@ -2,7 +2,7 @@ package garbuz.serialization
 {
 	import flash.utils.ByteArray;
 
-	internal class Decoder
+	internal final class Decoder
 	{
 		private var _decodeMethods:Array = [];
 
@@ -70,7 +70,7 @@ package garbuz.serialization
 
 		private function decodeArray(bytes:ByteArray):Array
 		{
-			var length:uint = bytes.readUnsignedInt();
+			var length:int = bytes.readInt();
 			var array:Array = [];
 
 			for (var i:int = 0; i < length; i++)
@@ -84,7 +84,7 @@ package garbuz.serialization
 		private function decodeMap(bytes:ByteArray):Object
 		{
 			var object:Object = {};
-			var propCount:uint = bytes.readUnsignedInt();
+			var propCount:int = bytes.readInt();
 
 			for (var i:int = 0; i < propCount; i++)
 			{
@@ -105,7 +105,7 @@ package garbuz.serialization
 
 		private function decodeTypedObject(bytes:ByteArray):Object
 		{
-			var typeIndex:uint = bytes.readShort();
+			var typeIndex:int = bytes.readShort();
 			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
 			var object:Object = new (type.classRef)();
 

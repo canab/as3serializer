@@ -3,7 +3,7 @@ package garbuz.serialization
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 
-	internal class TypeHolder
+	internal final class TypeHolder
 	{
 		public var index:int;
 		public var className:String;

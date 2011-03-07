@@ -3,7 +3,7 @@ package garbuz.serialization
 	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
 
-	internal class Encoder
+	internal final class Encoder
 	{
 		private static var _encodeMethods:Object = {};
 
@@ -64,37 +64,6 @@ package garbuz.serialization
 			bytes.writeByte(value ? Types.T_TRUE : Types.T_FALSE);
 		}
 
-		private function encodeArray(bytes:ByteArray, array:Array):void
-		{
-			var length:uint = array.length;
-
-			bytes.writeByte(Types.T_ARRAY);
-			bytes.writeUnsignedInt(length);
-
-			for (var i:int = 0; i < length; i++)
-			{
-				encodeValue(bytes, array[i]);
-			}
-		}
-
-		private function encodeMap(bytes:ByteArray, object:Object):void
-		{
-			var properties:Array = [];
-			for (var property:String in object)
-			{
-				properties.push(property);
-			}
-
-			bytes.writeByte(Types.T_MAP);
-			bytes.writeUnsignedInt(properties.length);
-
-			for each (property in properties)
-			{
-				bytes.writeUTF(property);
-				encodeValue(bytes, object[property]);
-			}
-		}
-
 		private function encodeObject(bytes:ByteArray, object:Object):void
 		{
 			if (object == null)
@@ -120,6 +89,43 @@ package garbuz.serialization
 			}
 		}
 
+		private function encodeArray(bytes:ByteArray, array:Array):void
+		{
+			var length:uint = array.length;
+
+			bytes.writeByte(Types.T_ARRAY);
+			bytes.writeInt(length);
+
+			for (var i:int = 0; i < length; i++)
+			{
+				encodeValue(bytes, array[i]);
+			}
+		}
+
+		private function encodeMap(bytes:ByteArray, object:Object):void
+		{
+			var properties:Array = [];
+			for (var property:String in object)
+			{
+				properties.push(property);
+			}
+
+			bytes.writeByte(Types.T_MAP);
+			bytes.writeInt(properties.length);
+
+			for each (property in properties)
+			{
+				bytes.writeUTF(property);
+				encodeValue(bytes, object[property]);
+			}
+		}
+
+		private function encodeDate(bytes:ByteArray, value:Date):void
+		{
+			bytes.writeByte(Types.T_DATE);
+			bytes.writeDouble(value.time);
+		}
+
 		private function encodeTypedObject(bytes:ByteArray, object:Object, typeName:String):void
 		{
 			var type:TypeHolder = Serializer.getTypeByName(typeName);
@@ -131,12 +137,6 @@ package garbuz.serialization
 			{
 				encodeValue(bytes, object[property]);
 			}
-		}
-
-		private function encodeDate(bytes:ByteArray, value:Date):void
-		{
-			bytes.writeByte(Types.T_DATE);
-			bytes.writeDouble(value.time);
 		}
 
 		private function encodeNull(bytes:ByteArray):void

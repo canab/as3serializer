@@ -4,13 +4,12 @@ import garbuz.serialization.Serializer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Date;
 
 public class SimpleTypesTest
 {
 	@Test
-	public void testInteger() throws IOException
+	public void testInteger() throws Exception
 	{
 		testValue(0);
 		testValue(12);
@@ -20,7 +19,7 @@ public class SimpleTypesTest
 	}
 
 	@Test
-	public void testDouble() throws IOException
+	public void testDouble() throws Exception
 	{
 		testValue(0);
 		testValue(-Math.PI);
@@ -33,7 +32,7 @@ public class SimpleTypesTest
 	}
 
 	@Test
-	public void testString() throws IOException
+	public void testString() throws Exception
 	{
 		testValue("");
 		testValue("qwerty");
@@ -42,25 +41,25 @@ public class SimpleTypesTest
 	}
 
 	@Test
-	public void testBoolean() throws IOException
+	public void testBoolean() throws Exception
 	{
 		testValue(true);
 		testValue(false);
 	}
 
 	@Test
-	public void testNull() throws IOException
+	public void testNull() throws Exception
 	{
 		testValue(null);
 	}
 
 	@Test
-	public void testDate() throws IOException
+	public void testDate() throws Exception
 	{
 		testValue(new Date());
 	}
 
-	protected void testValue(Object value) throws IOException
+	protected void testValue(Object value) throws Exception
 	{
 		byte[] bytes = Serializer.encode(value);
 		Object result = Serializer.decode(bytes);

@@ -2,7 +2,7 @@ package garbuz.serialization
 {
 	import flash.utils.ByteArray;
 
-	public class Serializer
+	public final class Serializer
 	{
 		private static var _encoder:Encoder = new Encoder();
 		private static var _decoder:Decoder = new Decoder();
