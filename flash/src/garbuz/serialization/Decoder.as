@@ -47,7 +47,15 @@ package garbuz.serialization
 
 		private function decodeString(bytes:ByteArray):String
 		{
-			return bytes.readUTF();
+			var length:int = bytes.readInt();
+			var string:String = "";
+
+			for (var i:int = 0; i < length; i++)
+			{
+				string += String.fromCharCode(bytes.readUnsignedShort());
+			}
+
+			return string;
 		}
 
 		//noinspection JSUnusedLocalSymbols

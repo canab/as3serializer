@@ -44,10 +44,20 @@ package remoteTests
 		}
 
 		[Test(async)]
+		public function testString():void
+		{
+			sendRequest([
+				"qwerty",
+				"éöóêåí",
+				"qwertyéöóêåí"
+			]);
+		}
+
+
+		[Test(async)]
 		public function testBoolean():void
 		{
-			sendRequest(true);
-			sendRequest(false);
+			sendRequest([true, false]);
 		}
 
 		[Test(async)]
@@ -60,6 +70,32 @@ package remoteTests
 		public function testDate():void
 		{
 			sendRequest(new Date());
+		}
+
+		[Test(async)]
+		public function testArray():void
+		{
+			var array1:Array = [1, 2, 3];
+			var array2:Array = [1, 1.5, false, null, "bla-bla"];
+
+			sendRequest([array1, array2, [array1, array2]]);
+		}
+
+		[Test(async)]
+		public function testMap():void
+		{
+			var map:Object =
+			{
+				integer: 5,
+				number: 0.5,
+				bool: false,
+				date: new Date(),
+				nullValue: null,
+				mapValue: {},
+				arrayValue: []
+			};
+
+			sendRequest(map);
 		}
 
 		private function sendRequest(value:Object):void
