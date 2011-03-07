@@ -14,7 +14,20 @@ public class SerializationTestServlet extends HttpServlet
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		response.getWriter().print("ok");
-		response.getWriter().close();
+		try
+		{
+			String data = request.getParameter("data");
+			response.getWriter().print(data);
+		}
+		catch (Exception e)
+		{
+			response.getWriter().println("Service call error:");
+			response.getWriter().println(e.toString());
+			e.printStackTrace();
+		}
+		finally
+		{
+			response.getWriter().close();
+		}
 	}
 }
