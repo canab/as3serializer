@@ -1,6 +1,8 @@
 package garbuz.serialization;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Comparator;
 
 final class TypeHolder
 {
@@ -20,6 +22,15 @@ final class TypeHolder
 	{
 		classRef = Class.forName(className);
 		fields = classRef.getFields();
+
+		Arrays.sort(fields, new Comparator<Field>()
+		{
+			public int compare(Field field, Field field1)
+			{
+				return field.getName().compareTo(field1.getName());
+			}
+		});
+
 		initialized = true;
 	}
 }
