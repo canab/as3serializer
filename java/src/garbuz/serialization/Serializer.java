@@ -58,12 +58,15 @@ public final class Serializer
 		return type;
 	}
 
-	protected static TypeHolder getTypeByIndex(int typeIndex) throws ClassNotFoundException
+	protected static TypeHolder getTypeByIndex(int typeIndex) throws Exception
 	{
 		TypeHolder type;
 		
 		synchronized (lock)
 		{
+			if (typeIndex >= typesByIndex.size())
+				throw new Exception("Cannot get type for index: " + typeIndex);
+
 			type = typesByIndex.get(typeIndex);
 
 			if (!type.initialized)

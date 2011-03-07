@@ -143,7 +143,7 @@ package garbuz.serialization
 			var type:TypeHolder = Serializer.getTypeByName(typeName);
 
 			bytes.writeByte(Types.T_OBJECT);
-			bytes.writeShort(type.index);
+			bytes.writeInt(type.index);
 
 			for each (var property:String in type.properties)
 			{

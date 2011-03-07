@@ -1,5 +1,7 @@
 package remoteTests
 {
+	import data.SampleObject;
+
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
@@ -8,6 +10,8 @@ package remoteTests
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
+
+	import flash.utils.getQualifiedClassName;
 
 	import garbuz.serialization.Serializer;
 
@@ -19,7 +23,7 @@ package remoteTests
 	public class FlashJavaTest extends TestBase
 	{
 		private static const URL:String = "http://localhost:8080/";
-		private static const TIMEOUT:int = 5000;
+		private static const TIMEOUT:int = 10000;
 
 		[Test(async)]
 		public function testInteger():void
@@ -97,6 +101,19 @@ package remoteTests
 
 			sendRequest(map);
 		}
+
+		[BeforeClass]
+		public static function setUp():void
+		{
+			Serializer.registerType(getQualifiedClassName(SampleObject));
+		}
+
+		[Test(async)]
+		public function testObject():void
+		{
+			sendRequest(new SampleObject());
+		}
+
 
 		private function sendRequest(value:Object):void
 		{

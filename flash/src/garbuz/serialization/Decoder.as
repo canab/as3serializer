@@ -113,7 +113,7 @@ package garbuz.serialization
 
 		private function decodeTypedObject(bytes:ByteArray):Object
 		{
-			var typeIndex:int = bytes.readShort();
+			var typeIndex:int = bytes.readInt();
 			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
 			var object:Object = new (type.classRef)();
 
