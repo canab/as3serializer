@@ -1,5 +1,9 @@
 package servlet;
 
+import garbuz.serialization.Serializer;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,9 +21,12 @@ public class SerializationTestServlet extends HttpServlet
 		try
 		{
 			String data = request.getParameter("data");
-			response.getWriter().print(data);
+			byte[] bytes = new BASE64Decoder().decodeBuffer(data);
+			Object object = Serializer.decode(bytes);
+			byte[] result = Serializer.encode(object);
+			response.getWriter().print(new BASE64Encoder().encode(result));
 		}
-		catch (Exception e)
+		catch (Throwable e)
 		{
 			response.getWriter().println("Service call error:");
 			response.getWriter().println(e.toString());
