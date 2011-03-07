@@ -1,6 +1,6 @@
 package garbuz.serialization;
 
-public final class Types
+final class Types
 {
 	public static final int T_INT = 0;
 	public static final int T_DOUBLE = 1;

@@ -3,7 +3,10 @@ package garbuz.serialization;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.Map;
 
 @SuppressWarnings({"ConstantConditions"})
 final class Encoder
@@ -12,7 +15,7 @@ final class Encoder
 	{
 	}
 
-	public byte[] encode(Object value) throws IOException
+	public byte[] encode(Object value) throws Exception
 	{
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
@@ -21,7 +24,8 @@ final class Encoder
 		return byteStream.toByteArray();
 	}
 
-	private void encodeValue(ObjectOutputStream stream, Object value) throws IOException
+	@SuppressWarnings({"unchecked"})
+	private void encodeValue(ObjectOutputStream stream, Object value) throws Exception
 	{
 		if (value instanceof Integer)
 		{
@@ -31,21 +35,33 @@ final class Encoder
 		{
 			encodeDouble(stream, (Double) value);
 		}
-		else if ((value instanceof String))
+		else if (value instanceof String)
 		{
 			encodeString(stream, (String) value);
 		}
-		else if ((value instanceof Boolean))
+		else if (value instanceof Boolean)
 		{
 			encodeBoolean(stream, (Boolean) value);
 		}
-		else if ((value instanceof Date))
+		else if (value instanceof Date)
 		{
 			encodeDate(stream, (Date) value);
+		}
+		else if (value instanceof Map)
+		{
+			encodeMap(stream, (Map<Object, Object>) value);
 		}
 		else if (value == null)
 		{
 			encodeNull(stream);
+		}
+		else if (value.getClass().isArray())
+		{
+			encodeArray(stream, (Object[]) value);
+		}
+		else
+		{
+			encodeTypedObject(stream, value);
 		}
 	}
 
@@ -81,6 +97,45 @@ final class Encoder
 	{
 		stream.writeByte(Types.T_DATE);
 		stream.writeDouble(value.getTime());
+	}
+
+	private void encodeArray(ObjectOutputStream stream, Object[] value) throws Exception
+	{
+		int length = Array.getLength(value);
+
+		stream.writeByte(Types.T_ARRAY);
+		stream.writeInt(length);
+
+		for (int i = 0; i < length; i++)
+		{
+			encodeValue(stream, value[i]);
+		}
+	}
+
+	private void encodeMap(ObjectOutputStream stream, Map<Object, Object> map) throws Exception
+	{
+		stream.writeByte(Types.T_MAP);
+		stream.writeInt(map.size());
+
+		for (Object key : map.keySet())
+		{
+			stream.writeUTF(key.toString());
+			encodeValue(stream, map.get(key));
+		}
+	}
+
+	private void encodeTypedObject(ObjectOutputStream stream, Object object) throws Exception
+	{
+		String typeName = object.getClass().getName();
+		TypeHolder type = Serializer.getTypeByName(typeName);
+
+		stream.writeByte(Types.T_OBJECT);
+		stream.writeShort(type.index);
+
+		for (Field field : type.fields)
+		{
+			encodeValue(stream, field.get(object));
+		}
 	}
 
 }

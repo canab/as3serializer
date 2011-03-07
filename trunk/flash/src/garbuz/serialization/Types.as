@@ -1,6 +1,6 @@
 package garbuz.serialization
 {
-	internal class Types
+	internal final class Types
 	{
 		public static const T_INT:int = 0;
 		public static const T_DOUBLE:int = 1;

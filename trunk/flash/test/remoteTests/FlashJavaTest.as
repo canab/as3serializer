@@ -1,10 +1,13 @@
 package remoteTests
 {
-	public class FlashJavaTest
+	import org.flexunit.asserts.assertEquals;
+
+	public class FlashJavaTest extends TestBase
 	{
 		[Test]
-		public function FlashJavaTest()
+		public function test():void
 		{
+			assertEquals(1, 2);
 		}
 	}
 }

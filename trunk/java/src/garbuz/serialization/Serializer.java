@@ -1,6 +1,5 @@
 package garbuz.serialization;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +15,12 @@ public final class Serializer
 
 	private static final Object lock = new Object();
 
-	public static byte[] encode(Object value) throws IOException
+	public static byte[] encode(Object value) throws Exception
 	{
 		return encoder.encode(value);
 	}
 
-	public static Object decode(byte[] bytes) throws IOException
+	public static Object decode(byte[] bytes) throws Exception
 	{
 		return decoder.decode(bytes);
 	}
@@ -37,11 +36,11 @@ public final class Serializer
 			TypeHolder type = new TypeHolder(index, qualifiedName);
 
 			typesByName.put(qualifiedName, type);
-			typesByIndex.set(index, type);
+			typesByIndex.add(type);
 		}
 	}
 
-	protected static TypeHolder getTypeByName(String qualifiedName)
+	protected static TypeHolder getTypeByName(String qualifiedName) throws Exception
 	{
 		TypeHolder type;
 
@@ -54,12 +53,12 @@ public final class Serializer
 		}
 
 		if (type == null)
-			throw new Error("Type " + qualifiedName + " is not registered");
+			throw new Exception("Type " + qualifiedName + " is not registered");
 
 		return type;
 	}
 
-	protected static TypeHolder getTypeByIndex(int typeIndex)
+	protected static TypeHolder getTypeByIndex(int typeIndex) throws ClassNotFoundException
 	{
 		TypeHolder type;
 		
