@@ -2,8 +2,8 @@ package garbuz.serialization;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,27 +13,27 @@ final class Decoder
 	public Object decode(byte[] bytes) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
 	{
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
-		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
-		Object value = decodeValue(objectStream);
+		Object value = decodeValue(byteStream);
 		return value;
 
 	}
 
-	private Object decodeValue(ObjectInputStream objectStream) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException
+	private Object decodeValue(ByteArrayInputStream stream) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
-		int type = objectStream.readByte();
+		int type = stream.read();
+
 		Object value = null;
 
 		switch (type)
 		{
 			case Types.T_INT:
-				value = decodeInt(objectStream);
+				value = decodeInt(stream);
 				break;
 			case Types.T_DOUBLE:
-				value = decodeDouble(objectStream);
+				value = decodeDouble(stream);
 				break;
 			case Types.T_STRING:
-				value = decodeString(objectStream);
+				value = decodeString(stream);
 				break;
 			case Types.T_TRUE:
 				value = true;
@@ -45,25 +45,25 @@ final class Decoder
 				value = null;
 				break;
 			case Types.T_DATE:
-				value = decodeDate(objectStream);
+				value = decodeDate(stream);
 				break;
 			case Types.T_ARRAY:
-				value = decodeArray(objectStream);
+				value = decodeArray(stream);
 				break;
 			case Types.T_MAP:
-				value = decodeMap(objectStream);
+				value = decodeMap(stream);
 				break;
 			case Types.T_OBJECT:
-				value = decodeObject(objectStream);
+				value = decodeObject(stream);
 				break;
 		}
 
 		return value;
 	}
 
-	private Object decodeArray(ObjectInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
+	private Object decodeArray(ByteArrayInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
 	{
-		int length = stream.readInt();
+		int length = decodeInt(stream);
 		Object[] array = new Object[length];
 
 		for (int i = 0; i < length; i++)
@@ -74,31 +74,59 @@ final class Decoder
 		return array;
 	}
 
-	private Object decodeInt(ObjectInputStream stream) throws IOException
+	private int decodeInt(ByteArrayInputStream stream) throws IOException
 	{
-		return stream.readInt();
+		ByteBuffer buffer = ByteBuffer.allocate(4);
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+
+		return buffer.getInt(0);
 	}
 
-	private Object decodeDouble(ObjectInputStream stream) throws IOException
+	private Object decodeDouble(ByteArrayInputStream stream) throws IOException
 	{
-		return stream.readDouble();
+		ByteBuffer buffer = ByteBuffer.allocate(8);
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+		buffer.put((byte) stream.read());
+
+		return buffer.getDouble(0);
 	}
 
-	private String decodeString(ObjectInputStream stream) throws IOException
+	private String decodeString(ByteArrayInputStream stream) throws IOException
 	{
-		return stream.readUTF();
+		ByteBuffer buffer = ByteBuffer.allocate(2);
+
+		int length = decodeInt(stream);
+		char[] chars = new char[length];
+
+		for (int i = 0; i < length; i++)
+		{
+			buffer.put(0, (byte) stream.read());
+			buffer.put(1, (byte) stream.read());
+			chars[i] = buffer.getChar(0);
+		}
+
+		return new String(chars);
 	}
 
-	private Date decodeDate(ObjectInputStream stream) throws IOException
+	private Date decodeDate(ByteArrayInputStream stream) throws IOException
 	{
-		long time = ((Double)stream.readDouble()).longValue();
+		long time = ((Double) decodeDouble(stream)).longValue();
 		return new Date(time);
 	}
 
-	private Map<String, Object> decodeMap(ObjectInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
+	private Map<String, Object> decodeMap(ByteArrayInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
 	{
 		Map<String, Object> map = new HashMap<String, Object>();
-		int keyCount = stream.readInt();
+		int keyCount = decodeInt(stream);
 
 		for (int i = 0; i < keyCount; i++)
 		{
@@ -110,16 +138,17 @@ final class Decoder
 		return map;
 	}
 
-	private Object decodeObject(ObjectInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
+	private Object decodeObject(ByteArrayInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
 	{
-			int typeIndex = stream.readShort();
-			TypeHolder type = Serializer.getTypeByIndex(typeIndex);
-			Object object = type.classRef.newInstance();
+		int typeIndex = decodeInt(stream);
+		TypeHolder type = Serializer.getTypeByIndex(typeIndex);
+		Object object = type.classRef.newInstance();
 
-			for (Field field: type.fields)
-			{
-				field.set(object, decodeValue(stream));
-			}
+		for (Field field : type.fields)
+		{
+			field.set(object, decodeValue(stream));
+		}
 
-			return object;	}
+		return object;
+	}
 }

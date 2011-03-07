@@ -54,10 +54,7 @@ package localTests
 		[Test]
 		public function testDate():void
 		{
-			var date:Date = new Date();
-			var bytes:ByteArray = Serializer.encode(date);
-			var decodedValue:Date = Serializer.decode(bytes) as Date;
-			deepCompare(date.time, decodedValue.time);
+			testValue(new Date());
 		}
 	}
 }

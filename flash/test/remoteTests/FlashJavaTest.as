@@ -1,24 +1,20 @@
 package remoteTests
 {
-	import by.blooddy.crypto.Base64;
-
-	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
 
 	import garbuz.serialization.Serializer;
 
-	import org.flexunit.Assert;
-	import org.flexunit.asserts.fail;
+	import mx.utils.Base64Decoder;
+	import mx.utils.Base64Encoder;
+
 	import org.flexunit.async.Async;
-	import org.flexunit.runner.Request;
 
 	public class FlashJavaTest extends TestBase
 	{
@@ -28,17 +24,17 @@ package remoteTests
 		[Test(async)]
 		public function testInteger():void
 		{
-			//sendRequest([0, 1, -1, int.MIN_VALUE, int.MAX_VALUE]);
-			sendRequest(1);
+			sendRequest([0, 1, -1, int.MIN_VALUE, int.MAX_VALUE]);
 		}
 
-		[Ignore]
 		[Test(async)]
 		public function testNumber():void
 		{
 			sendRequest(
 				[
-					0, -Math.PI, 0.25,
+					0,
+					-Math.PI,
+					0.25,
 					Number.MAX_VALUE,
 					Number.MIN_VALUE,
 					Number.NEGATIVE_INFINITY,
@@ -47,10 +43,33 @@ package remoteTests
 				]);
 		}
 
+		[Test(async)]
+		public function testBoolean():void
+		{
+			sendRequest(true);
+			sendRequest(false);
+		}
+
+		[Test(async)]
+		public function testNull():void
+		{
+			sendRequest(null);
+		}
+
+		[Test(async)]
+		public function testDate():void
+		{
+			sendRequest(new Date());
+		}
+
 		private function sendRequest(value:Object):void
 		{
 			var requestData:URLVariables = new URLVariables();
-			requestData.data = Base64.encode(Serializer.encode(value));
+			var bytes:ByteArray = Serializer.encode(value);
+
+			var encoder:Base64Encoder = new Base64Encoder();
+			encoder.encodeBytes(bytes);
+			requestData.data = encoder.toString();
 
 			var request:URLRequest = new URLRequest(URL);
 			request.method = URLRequestMethod.GET;
@@ -68,8 +87,13 @@ package remoteTests
 		private function onResponse(event:Event, source:Object):void
 		{
 			var data:String = URLLoader(event.target).data;
-			var bytes:ByteArray = Base64.decode(data);
+
+			var decoder:Base64Decoder = new Base64Decoder();
+			decoder.decode(data);
+			var bytes:ByteArray = decoder.toByteArray();
+
 			var result:Object = Serializer.decode(bytes);
+
 			deepCompare(source, result);
 		}
 	}

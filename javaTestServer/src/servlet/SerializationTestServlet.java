@@ -20,11 +20,12 @@ public class SerializationTestServlet extends HttpServlet
 	{
 		try
 		{
-			String data = request.getParameter("data");
-			byte[] bytes = new BASE64Decoder().decodeBuffer(data);
-			Object object = Serializer.decode(bytes);
-			byte[] result = Serializer.encode(object);
-			response.getWriter().print(new BASE64Encoder().encode(result));
+			String sourceData = request.getParameter("data");
+			byte[] sourceBytes = new BASE64Decoder().decodeBuffer(sourceData);
+			Object object = Serializer.decode(sourceBytes);
+			byte[] resultBytes = Serializer.encode(object);
+			String resultData = new BASE64Encoder().encode(resultBytes);
+			response.getWriter().print(resultData);
 		}
 		catch (Throwable e)
 		{

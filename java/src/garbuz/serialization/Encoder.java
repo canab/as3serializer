@@ -2,9 +2,9 @@ package garbuz.serialization;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Map;
 
@@ -18,14 +18,13 @@ final class Encoder
 	public byte[] encode(Object value) throws Exception
 	{
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-		encodeValue(objectStream, value);
-		objectStream.close();
+		encodeValue(byteStream, value);
+		byteStream.close();
 		return byteStream.toByteArray();
 	}
 
 	@SuppressWarnings({"unchecked"})
-	private void encodeValue(ObjectOutputStream stream, Object value) throws Exception
+	private void encodeValue(ByteArrayOutputStream stream, Object value) throws Exception
 	{
 		if (value instanceof Integer)
 		{
@@ -65,46 +64,74 @@ final class Encoder
 		}
 	}
 
-	private void encodeInteger(ObjectOutputStream stream, int value) throws IOException
+	private void encodeInteger(ByteArrayOutputStream stream, int value) throws IOException
 	{
-		stream.writeByte(Types.T_INT);
-		stream.writeInt(value);
+		stream.write(Types.T_INT);
+		writeInt(stream, value);
 	}
 
-	private void encodeDouble(ObjectOutputStream stream, Double value) throws IOException
+	private void writeInt(ByteArrayOutputStream stream, int value) throws IOException
 	{
-		stream.writeByte(Types.T_DOUBLE);
-		stream.writeDouble(value);
+		ByteBuffer buffer = ByteBuffer.allocate(4);
+		buffer.putInt(value);
+		stream.write(buffer.array());
 	}
 
-	private void encodeString(ObjectOutputStream stream, String value) throws IOException
+	private void encodeDouble(ByteArrayOutputStream stream, double value) throws IOException
 	{
-		stream.writeByte(Types.T_STRING);
-		stream.writeUTF(value);
+		stream.write(Types.T_DOUBLE);
+		writeDouble(stream, value);
 	}
 
-	private void encodeBoolean(ObjectOutputStream stream, boolean value) throws IOException
+	private void writeDouble(ByteArrayOutputStream stream, double value) throws IOException
 	{
-		stream.writeByte(value ? Types.T_TRUE : Types.T_FALSE);
+		ByteBuffer buffer = ByteBuffer.allocate(8);
+		buffer.putDouble(value);
+		stream.write(buffer.array());
 	}
 
-	private void encodeNull(ObjectOutputStream stream) throws IOException
+	private void encodeString(ByteArrayOutputStream stream, String value) throws IOException
 	{
-		stream.writeByte(Types.T_NULL);
+		stream.write(Types.T_STRING);
+		writeString(stream, value);
 	}
 
-	private void encodeDate(ObjectOutputStream stream, Date value) throws IOException
+	private void writeString(ByteArrayOutputStream stream, String value) throws IOException
 	{
-		stream.writeByte(Types.T_DATE);
-		stream.writeDouble(value.getTime());
+		char[] chars = value.toCharArray();
+		writeInt(stream, chars.length);
+
+		ByteBuffer buffer = ByteBuffer.allocate(2);
+
+		for (char ch: chars)
+		{
+			buffer.putChar(0, ch);
+			stream.write(buffer.array());
+		}
 	}
 
-	private void encodeArray(ObjectOutputStream stream, Object[] value) throws Exception
+	private void encodeBoolean(ByteArrayOutputStream stream, boolean value) throws IOException
+	{
+		stream.write(value ? Types.T_TRUE : Types.T_FALSE);
+	}
+
+	private void encodeNull(ByteArrayOutputStream stream) throws IOException
+	{
+		stream.write(Types.T_NULL);
+	}
+
+	private void encodeDate(ByteArrayOutputStream stream, Date value) throws IOException
+	{
+		stream.write(Types.T_DATE);
+		writeDouble(stream, value.getTime());
+	}
+
+	private void encodeArray(ByteArrayOutputStream stream, Object[] value) throws Exception
 	{
 		int length = Array.getLength(value);
 
-		stream.writeByte(Types.T_ARRAY);
-		stream.writeInt(length);
+		stream.write(Types.T_ARRAY);
+		writeInt(stream, length);
 
 		for (int i = 0; i < length; i++)
 		{
@@ -112,25 +139,25 @@ final class Encoder
 		}
 	}
 
-	private void encodeMap(ObjectOutputStream stream, Map<Object, Object> map) throws Exception
+	private void encodeMap(ByteArrayOutputStream stream, Map<Object, Object> map) throws Exception
 	{
-		stream.writeByte(Types.T_MAP);
-		stream.writeInt(map.size());
+		stream.write(Types.T_MAP);
+		writeInt(stream, map.size());
 
 		for (Object key : map.keySet())
 		{
-			stream.writeUTF(key.toString());
+			writeString(stream, key.toString());
 			encodeValue(stream, map.get(key));
 		}
 	}
 
-	private void encodeTypedObject(ObjectOutputStream stream, Object object) throws Exception
+	private void encodeTypedObject(ByteArrayOutputStream stream, Object object) throws Exception
 	{
 		String typeName = object.getClass().getName();
 		TypeHolder type = Serializer.getTypeByName(typeName);
 
-		stream.writeByte(Types.T_OBJECT);
-		stream.writeShort(type.index);
+		stream.write(Types.T_OBJECT);
+		writeInt(stream, type.index);
 
 		for (Field field : type.fields)
 		{
