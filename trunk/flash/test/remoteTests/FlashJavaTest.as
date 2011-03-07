@@ -26,9 +26,25 @@ package remoteTests
 		private static const TIMEOUT:int = 5000;
 
 		[Test(async)]
-		public function test():void
+		public function testInteger():void
 		{
+			//sendRequest([0, 1, -1, int.MIN_VALUE, int.MAX_VALUE]);
 			sendRequest(1);
+		}
+
+		[Ignore]
+		[Test(async)]
+		public function testNumber():void
+		{
+			sendRequest(
+				[
+					0, -Math.PI, 0.25,
+					Number.MAX_VALUE,
+					Number.MIN_VALUE,
+					Number.NEGATIVE_INFINITY,
+					Number.POSITIVE_INFINITY,
+					Number.NaN,
+				]);
 		}
 
 		private function sendRequest(value:Object):void
