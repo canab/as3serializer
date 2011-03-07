@@ -10,7 +10,7 @@ import java.util.Map;
 
 final class Decoder
 {
-	public Object decode(byte[] bytes) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
+	public Object decode(byte[] bytes) throws Exception
 	{
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
 		Object value = decodeValue(byteStream);
@@ -18,7 +18,7 @@ final class Decoder
 
 	}
 
-	private Object decodeValue(ByteArrayInputStream stream) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException
+	private Object decodeValue(ByteArrayInputStream stream) throws Exception
 	{
 		int type = stream.read();
 
@@ -61,7 +61,7 @@ final class Decoder
 		return value;
 	}
 
-	private Object decodeArray(ByteArrayInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
+	private Object decodeArray(ByteArrayInputStream stream) throws Exception
 	{
 		int length = decodeInt(stream);
 		Object[] array = new Object[length];
@@ -123,7 +123,7 @@ final class Decoder
 		return new Date(time);
 	}
 
-	private Map<String, Object> decodeMap(ByteArrayInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
+	private Map<String, Object> decodeMap(ByteArrayInputStream stream) throws Exception
 	{
 		Map<String, Object> map = new HashMap<String, Object>();
 		int keyCount = decodeInt(stream);
@@ -138,7 +138,7 @@ final class Decoder
 		return map;
 	}
 
-	private Object decodeObject(ByteArrayInputStream stream) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException
+	private Object decodeObject(ByteArrayInputStream stream) throws Exception
 	{
 		int typeIndex = decodeInt(stream);
 		TypeHolder type = Serializer.getTypeByIndex(typeIndex);

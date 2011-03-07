@@ -1,5 +1,6 @@
 package servlet;
 
+import data.SampleObject;
 import garbuz.serialization.Serializer;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -18,6 +19,8 @@ public class SerializationTestServlet extends HttpServlet
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
+		Serializer.registerType(SampleObject.class.getName());
+
 		try
 		{
 			String sourceData = request.getParameter("data");
@@ -29,8 +32,6 @@ public class SerializationTestServlet extends HttpServlet
 		}
 		catch (Throwable e)
 		{
-			response.getWriter().println("Service call error:");
-			response.getWriter().println(e.toString());
 			e.printStackTrace();
 		}
 		finally
