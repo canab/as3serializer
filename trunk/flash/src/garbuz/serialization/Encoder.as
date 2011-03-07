@@ -56,7 +56,19 @@ package garbuz.serialization
 		private function encodeString(bytes:ByteArray, value:String):void
 		{
 			bytes.writeByte(Types.T_STRING);
-			bytes.writeUTF(String(value));
+			writeString(bytes, value);
+		}
+
+		private function writeString(bytes:ByteArray, value:String):void
+		{
+			var length:int = value.length;
+
+			bytes.writeInt(length);
+
+			for (var i:int = 0; i < length; i++)
+			{
+				bytes.writeShort(value.charCodeAt(i))
+			}
 		}
 
 		private function encodeBoolean(bytes:ByteArray, value:Boolean):void
@@ -115,7 +127,7 @@ package garbuz.serialization
 
 			for each (property in properties)
 			{
-				bytes.writeUTF(property);
+				writeString(bytes, property);
 				encodeValue(bytes, object[property]);
 			}
 		}

@@ -32,8 +32,9 @@ package localTests
 		[Test]
 		public function testString():void
 		{
-			testValue("");
-			testValue("qwerty");
+			//testValue("");
+			//testValue("qwerty");
+			testValue("й");
 			testValue("йцукен");
 			testValue("qwertyйцукен");
 		}
