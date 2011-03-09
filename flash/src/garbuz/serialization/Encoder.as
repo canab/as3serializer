@@ -6,8 +6,8 @@ package garbuz.serialization
 	internal final class Encoder
 	{
 		private var _encodeMethods:Object = {};
-		private var _bytes:ByteArray;
-		private var _stringRefs:Array;
+		private var _bytes:ByteArray = new ByteArray();
+		private var _stringRefs:Array = [];
 
 		public function Encoder()
 		{
@@ -19,7 +19,8 @@ package garbuz.serialization
 
 		public function encode(value:Object):ByteArray
 		{
-			_bytes = new ByteArray();
+			_bytes.position = 0;
+			_bytes.length = 0;
 			_stringRefs = [];
 			encodeValue(value);
 			return _bytes;

@@ -4,6 +4,8 @@ package garbuz.serialization
 
 	public final class Serializer
 	{
+		internal static var objectPool:ObjectPool = new ObjectPool();
+
 		private static var _encoder:Encoder = new Encoder();
 		private static var _decoder:Decoder = new Decoder();
 
