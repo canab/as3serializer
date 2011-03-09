@@ -64,7 +64,7 @@ final class Decoder
 
 	private Object decodeArray() throws Exception
 	{
-		int length = decodeInt();
+		int length = (Integer) decodeValue();
 		Object[] array = new Object[length];
 
 		for (int i = 0; i < length; i++)
@@ -85,9 +85,9 @@ final class Decoder
 		return byteBuffer.getDouble();
 	}
 
-	private String decodeString() throws IOException
+	private String decodeString() throws Exception
 	{
-		int length = decodeInt();
+		int length = (Integer) decodeValue();
 		char[] chars = new char[length];
 
 		for (int i = 0; i < length; i++)
@@ -107,7 +107,7 @@ final class Decoder
 	private Map<String, Object> decodeMap() throws Exception
 	{
 		Map<String, Object> map = new HashMap<String, Object>();
-		int keyCount = decodeInt();
+		int keyCount = (Integer) decodeValue();
 
 		for (int i = 0; i < keyCount; i++)
 		{
@@ -121,7 +121,7 @@ final class Decoder
 
 	private Object decodeObject() throws Exception
 	{
-		int typeIndex = decodeInt();
+		int typeIndex = (Integer) decodeValue();
 		TypeHolder type = Serializer.getTypeByIndex(typeIndex);
 		Object object = type.classRef.newInstance();
 

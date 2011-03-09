@@ -15,6 +15,12 @@ package localTests
 		}
 
 		[Test]
+		public function testEmptyMap():void
+		{
+			testValue({});
+		}
+
+		[Test]
 		public function testMap():void
 		{
 			testValue({});

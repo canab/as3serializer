@@ -67,11 +67,6 @@ final class Encoder
 	private void encodeInteger(int value) throws IOException
 	{
 		byteStream.write(Types.T_INT);
-		writeInteger(value);
-	}
-
-	private void writeInteger(int value) throws IOException
-	{
 		byteBuffer.putInt(0, value);
 		byteStream.write(byteBuffer.array(), 0, 4);
 	}
@@ -97,7 +92,7 @@ final class Encoder
 	private void writeString(String value) throws IOException
 	{
 		char[] chars = value.toCharArray();
-		writeInteger(chars.length);
+		encodeInteger(chars.length);
 
 		for (char ch: chars)
 		{
@@ -127,7 +122,7 @@ final class Encoder
 		int length = Array.getLength(value);
 
 		byteStream.write(Types.T_ARRAY);
-		writeInteger(length);
+		encodeInteger(length);
 
 		for (int i = 0; i < length; i++)
 		{
@@ -138,7 +133,7 @@ final class Encoder
 	private void encodeMap(Map<Object, Object> map) throws Exception
 	{
 		byteStream.write(Types.T_MAP);
-		writeInteger(map.size());
+		encodeInteger(map.size());
 
 		for (Object key : map.keySet())
 		{
@@ -153,7 +148,7 @@ final class Encoder
 		TypeHolder type = Serializer.getTypeByName(typeName);
 
 		byteStream.write(Types.T_OBJECT);
-		writeInteger(type.index);
+		encodeInteger(type.index);
 
 		for (Field field : type.fields)
 		{

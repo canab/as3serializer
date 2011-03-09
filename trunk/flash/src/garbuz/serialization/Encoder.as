@@ -64,7 +64,7 @@ package garbuz.serialization
 		{
 			var length:int = value.length;
 
-			_bytes.writeInt(length);
+			encodeInt(length);
 
 			for (var i:int = 0; i < length; i++)
 			{
@@ -107,7 +107,8 @@ package garbuz.serialization
 			var length:uint = array.length;
 
 			_bytes.writeByte(Types.T_ARRAY);
-			_bytes.writeInt(length);
+
+			encodeInt(length);
 
 			for (var i:int = 0; i < length; i++)
 			{
@@ -117,14 +118,15 @@ package garbuz.serialization
 
 		private function encodeMap(object:Object):void
 		{
+			_bytes.writeByte(Types.T_MAP);
+
 			var properties:Array = [];
 			for (var property:String in object)
 			{
 				properties.push(property);
 			}
 
-			_bytes.writeByte(Types.T_MAP);
-			_bytes.writeInt(properties.length);
+			encodeInt(properties.length);
 
 			for each (property in properties)
 			{
@@ -144,7 +146,8 @@ package garbuz.serialization
 			var type:TypeHolder = Serializer.getTypeByName(typeName);
 
 			_bytes.writeByte(Types.T_OBJECT);
-			_bytes.writeInt(type.index);
+
+			encodeInt(type.index);
 
 			for each (var property:String in type.properties)
 			{
