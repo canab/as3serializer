@@ -5,6 +5,7 @@ package garbuz.serialization
 	internal final class Decoder
 	{
 		private var _decodeMethods:Array = [];
+		private var _bytes:ByteArray;
 
 		public function Decoder()
 		{
@@ -22,104 +23,105 @@ package garbuz.serialization
 
 		public function decode(bytes:ByteArray):Object
 		{
-			bytes.position = 0;
-			var value:Object = decodeValue(bytes);
-			return value;
+			_bytes = bytes;
+			_bytes.position = 0;
+			
+			return decodeValue();
 		}
 
-		private function decodeValue(bytes:ByteArray):Object
+		private function decodeValue():Object
 		{
-			var type:int = bytes.readByte();
+			var type:int = _bytes.readByte();
 			var method:Function = _decodeMethods[type];
-			var value:Object = method(bytes);
+			var value:Object = method();
 			return value;
 		}
 
-		private function decodeInt(bytes:ByteArray):int
+		private function decodeInt():int
 		{
-			return bytes.readInt();
+			return _bytes.readInt();
 		}
 
-		private function decodeDouble(bytes:ByteArray):Number
+		private function decodeDouble():Number
 		{
-			return bytes.readDouble();
+			return _bytes.readDouble();
 		}
 
-		private function decodeString(bytes:ByteArray):String
+		private function decodeString():String
 		{
-			var length:int = bytes.readInt();
+			var length:int = _bytes.readInt();
 			var string:String = "";
 
 			for (var i:int = 0; i < length; i++)
 			{
-				string += String.fromCharCode(bytes.readUnsignedShort());
+				string += String.fromCharCode(_bytes.readUnsignedShort());
 			}
 
 			return string;
 		}
 
 		//noinspection JSUnusedLocalSymbols
-		private function decodeTrue(bytes:ByteArray):Boolean
+		private function decodeTrue():Boolean
 		{
 			return true;
 		}
 
 		//noinspection JSUnusedLocalSymbols
-		private function decodeFalse(bytes:ByteArray):Boolean
+		private function decodeFalse():Boolean
 		{
 			return false;
 		}
 
 		//noinspection JSUnusedLocalSymbols
-		private function decodeNull(bytes:ByteArray):Object
+		private function decodeNull():Object
 		{
 			return null;
 		}
 
-		private function decodeArray(bytes:ByteArray):Array
+		private function decodeArray():Array
 		{
-			var length:int = bytes.readInt();
+			var length:int = _bytes.readInt();
 			var array:Array = [];
 
 			for (var i:int = 0; i < length; i++)
 			{
-				array.push(decodeValue(bytes));
+				array.push(decodeValue());
 			}
 
 			return array;
 		}
 
-		private function decodeMap(bytes:ByteArray):Object
+		private function decodeMap():Object
 		{
 			var object:Object = {};
-			var propCount:int = bytes.readInt();
+			var propCount:int = _bytes.readInt();
 
 			for (var i:int = 0; i < propCount; i++)
 			{
-				var propName:String = decodeString(bytes);
-				var propValue:Object = decodeValue(bytes);
+				var propName:String = decodeString();
+				var propValue:Object = decodeValue();
 				object[propName] = propValue;
 			}
 
 			return object;
 		}
 
-		private function decodeDate(bytes:ByteArray):Date
+		private function decodeDate():Date
 		{
 			var date:Date = new Date();
-			date.time = bytes.readDouble();
+			date.time = _bytes.readDouble();
 			return date;
 		}
 
-		private function decodeTypedObject(bytes:ByteArray):Object
+		private function decodeTypedObject():Object
 		{
-			var typeIndex:int = bytes.readInt();
+			var typeIndex:int = _bytes.readInt();
 			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
 			var object:Object = new (type.classRef)();
 
 			for each (var property:String in type.properties)
 			{
-				object[property] = decodeValue(bytes);
+				object[property] = decodeValue();
 			}
 
 			return object;
