@@ -38,12 +38,16 @@
 
 	<target name="buildJava" depends="buildNumber">
 		<property name="jar.name" value="serializer-r${build.number}.jar"/>
+		<property name="java.output.dir" value="${output.dir}/classes"/>
 
-		<mkdir dir="${output.dir}/classes"/>
+		<mkdir dir="${java.output.dir}"/>
 
-		<javac destdir="${output.dir}/classes" debug="${build.debug}">
+		<javac destdir="${java.output.dir}" debug="${build.debug}">
 			<src path="../java/src"/>
 		</javac>
+
+        <jar destfile="${output.dir}/${jar.name}" basedir="${java.output.dir}"/>
 		
+		<delete dir="${java.output.dir}"/>
 	</target>
 </project>
