@@ -27,14 +27,8 @@ final class Decoder
 
 		switch (type)
 		{
-			case Types.T_INT:
-				value = decodeInt();
-				break;
-			case Types.T_DOUBLE:
-				value = decodeDouble();
-				break;
-			case Types.T_STRING:
-				value = decodeString();
+			case Types.T_NULL:
+				value = null;
 				break;
 			case Types.T_TRUE:
 				value = true;
@@ -42,20 +36,47 @@ final class Decoder
 			case Types.T_FALSE:
 				value = false;
 				break;
-			case Types.T_NULL:
-				value = null;
+			case Types.T_STRING:
+				value = decodeString();
+				break;
+			case Types.T_DOUBLE:
+				value = decodeDouble();
 				break;
 			case Types.T_DATE:
 				value = decodeDate();
 				break;
-			case Types.T_ARRAY:
-				value = decodeArray();
-				break;
 			case Types.T_MAP:
 				value = decodeMap();
 				break;
+			case Types.T_ARRAY:
+				value = decodeArray();
+				break;
 			case Types.T_OBJECT:
 				value = decodeObject();
+				break;
+			case Types.T_UINT1:
+				value = decodeUInt1();
+				break;
+			case Types.T_UINT2:
+				value = decodeUInt2();
+				break;
+			case Types.T_UINT3:
+				value = decodeUInt3();
+				break;
+			case Types.T_UINT4:
+				value = decodeUInt4();
+				break;
+			case Types.T_NINT1:
+				value = decodeNInt1();
+				break;
+			case Types.T_NINT2:
+				value = decodeNInt2();
+				break;
+			case Types.T_NINT3:
+				value = decodeNInt3();
+				break;
+			case Types.T_NINT4:
+				value = decodeNInt4();
 				break;
 		}
 
@@ -75,9 +96,62 @@ final class Decoder
 		return array;
 	}
 
-	private int decodeInt() throws IOException
+	private int decodeUInt1() throws IOException
 	{
-		return byteBuffer.getInt();
+		return byteBuffer.get() & 0xFF;
+	}
+
+	private int decodeUInt2() throws IOException
+	{
+		long unsigned = byteBuffer.get() & 0xFF;
+		unsigned |= (byteBuffer.get() & 0xFF) << 8;
+		return (int) unsigned;
+	}
+
+	private int decodeUInt3() throws IOException
+	{
+		long unsigned = byteBuffer.get() & 0xFF;
+		unsigned |= (byteBuffer.get() & 0xFF) << 8;
+		unsigned |= (byteBuffer.get() & 0xFF) << 16;
+		return (int) unsigned;
+	}
+
+	private int decodeUInt4() throws IOException
+	{
+		long unsigned = byteBuffer.get() & 0xFF;
+		unsigned |= (byteBuffer.get() & 0xFF) << 8;
+		unsigned |= (byteBuffer.get() & 0xFF) << 16;
+		unsigned |= (byteBuffer.get() & 0xFF) << 24;
+		return (int) unsigned;
+	}
+
+	private int decodeNInt1() throws IOException
+	{
+		return -(byteBuffer.get() & 0xFF);
+	}
+
+	private int decodeNInt2() throws IOException
+	{
+		long unsigned = byteBuffer.get() & 0xFF;
+		unsigned |= byteBuffer.get() << 8;
+		return (int) -unsigned ;
+	}
+
+	private int decodeNInt3() throws IOException
+	{
+		long unsigned = byteBuffer.get() & 0xFF;
+		unsigned |= (byteBuffer.get() & 0xFF) << 8;
+		unsigned |= (byteBuffer.get() & 0xFF) << 16;
+		return (int) -unsigned;
+	}
+
+	private int decodeNInt4() throws IOException
+	{
+		long unsigned = byteBuffer.get() & 0xFF;
+		unsigned |= (byteBuffer.get() & 0xFF) << 8;
+		unsigned |= (byteBuffer.get() & 0xFF) << 16;
+		unsigned |= (byteBuffer.get() & 0xFF) << 24;
+		return (int) -unsigned;
 	}
 
 	private Object decodeDouble() throws IOException

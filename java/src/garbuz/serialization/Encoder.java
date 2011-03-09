@@ -64,13 +64,70 @@ final class Encoder
 		}
 	}
 
-	private void encodeInteger(int value) throws IOException
+	private void encodeInteger(int value)
 	{
-		byteStream.write(Types.T_INT);
-		byteBuffer.putInt(0, value);
-		byteStream.write(byteBuffer.array(), 0, 4);
-	}
+		long unsigned = (value >= 0) ? value : -(long)value;
 
+		if (value >= 0)
+		{
+			if (unsigned <= 0xFF)
+			{
+				byteStream.write(Types.T_UINT1);
+				byteStream.write((int) unsigned);
+			}
+			else if (unsigned <= 0xFFFF)
+			{
+				byteStream.write(Types.T_UINT2);
+				byteStream.write((int) (unsigned & 0xFF));
+				byteStream.write((int) (unsigned >> 8));
+			}
+			else if (unsigned <= 0xFFFFFF)
+			{
+				byteStream.write(Types.T_UINT3);
+				byteStream.write((int) (unsigned & 0xFF));
+				byteStream.write((int) ((unsigned >> 8) & 0xFF));
+				byteStream.write((int) (unsigned >> 16));
+			}
+			else
+			{
+				byteStream.write(Types.T_UINT4);
+				byteStream.write((int) (unsigned & 0xFF));
+				byteStream.write((int) ((unsigned >> 8) & 0xFF));
+				byteStream.write((int) ((unsigned >> 16) & 0xFF));
+				byteStream.write((int) (unsigned >> 24));
+			}
+		}
+		else
+		{
+			if (unsigned <= 0xFF)
+			{
+				byteStream.write(Types.T_NINT1);
+				byteStream.write((int) unsigned);
+			}
+			else if (unsigned <= 0xFFFF)
+			{
+				byteStream.write(Types.T_NINT2);
+				byteStream.write((int) (unsigned & 0xFF));
+				byteStream.write((int) (unsigned >> 8));
+			}
+			else if (unsigned <= 0xFFFFFF)
+			{
+				byteStream.write(Types.T_NINT3);
+				byteStream.write((int) (unsigned & 0xFF));
+				byteStream.write((int) ((unsigned >> 8) & 0xFF));
+				byteStream.write((int) (unsigned >> 16));
+			}
+			else
+			{
+				byteStream.write(Types.T_NINT4);
+				byteStream.write((int) (unsigned & 0xFF));
+				byteStream.write((int) ((unsigned >> 8) & 0xFF));
+				byteStream.write((int) ((unsigned >> 16) & 0xFF));
+				byteStream.write((int) (unsigned >> 24));
+			}
+		}
+	}
+	
 	private void encodeDouble(double value) throws IOException
 	{
 		byteStream.write(Types.T_DOUBLE);
