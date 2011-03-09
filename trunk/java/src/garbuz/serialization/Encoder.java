@@ -11,157 +11,153 @@ import java.util.Map;
 @SuppressWarnings({"ConstantConditions"})
 final class Encoder
 {
-	public Encoder()
-	{
-	}
+	private ByteArrayOutputStream byteStream;
+	private ByteBuffer byteBuffer = ByteBuffer.allocate(8);
 
 	public byte[] encode(Object value) throws Exception
 	{
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		encodeValue(byteStream, value);
+		byteStream = new ByteArrayOutputStream();
+		encodeValue(value);
 		byteStream.close();
+		
 		return byteStream.toByteArray();
 	}
 
 	@SuppressWarnings({"unchecked"})
-	private void encodeValue(ByteArrayOutputStream stream, Object value) throws Exception
+	private void encodeValue(Object value) throws Exception
 	{
 		if (value instanceof Integer)
 		{
-			encodeInteger(stream, (Integer) value);
+			encodeInteger((Integer) value);
 		}
 		else if ((value instanceof Double) || (value instanceof Float))
 		{
-			encodeDouble(stream, (Double) value);
+			encodeDouble((Double) value);
 		}
 		else if (value instanceof String)
 		{
-			encodeString(stream, (String) value);
+			encodeString((String) value);
 		}
 		else if (value instanceof Boolean)
 		{
-			encodeBoolean(stream, (Boolean) value);
+			encodeBoolean((Boolean) value);
 		}
 		else if (value instanceof Date)
 		{
-			encodeDate(stream, (Date) value);
+			encodeDate((Date) value);
 		}
 		else if (value instanceof Map)
 		{
-			encodeMap(stream, (Map<Object, Object>) value);
+			encodeMap((Map<Object, Object>) value);
 		}
 		else if (value == null)
 		{
-			encodeNull(stream);
+			encodeNull();
 		}
 		else if (value.getClass().isArray())
 		{
-			encodeArray(stream, (Object[]) value);
+			encodeArray((Object[]) value);
 		}
 		else
 		{
-			encodeTypedObject(stream, value);
+			encodeTypedObject(value);
 		}
 	}
 
-	private void encodeInteger(ByteArrayOutputStream stream, int value) throws IOException
+	private void encodeInteger(int value) throws IOException
 	{
-		stream.write(Types.T_INT);
-		writeInt(stream, value);
+		byteStream.write(Types.T_INT);
+		writeInteger(value);
 	}
 
-	private void writeInt(ByteArrayOutputStream stream, int value) throws IOException
+	private void writeInteger(int value) throws IOException
 	{
-		ByteBuffer buffer = ByteBuffer.allocate(4);
-		buffer.putInt(value);
-		stream.write(buffer.array());
+		byteBuffer.putInt(0, value);
+		byteStream.write(byteBuffer.array(), 0, 4);
 	}
 
-	private void encodeDouble(ByteArrayOutputStream stream, double value) throws IOException
+	private void encodeDouble(double value) throws IOException
 	{
-		stream.write(Types.T_DOUBLE);
-		writeDouble(stream, value);
+		byteStream.write(Types.T_DOUBLE);
+		writeDouble(value);
 	}
 
-	private void writeDouble(ByteArrayOutputStream stream, double value) throws IOException
+	private void writeDouble(double value) throws IOException
 	{
-		ByteBuffer buffer = ByteBuffer.allocate(8);
-		buffer.putDouble(value);
-		stream.write(buffer.array());
+		byteBuffer.putDouble(0, value);
+		byteStream.write(byteBuffer.array(), 0, 8);
 	}
 
-	private void encodeString(ByteArrayOutputStream stream, String value) throws IOException
+	private void encodeString(String value) throws IOException
 	{
-		stream.write(Types.T_STRING);
-		writeString(stream, value);
+		byteStream.write(Types.T_STRING);
+		writeString(value);
 	}
 
-	private void writeString(ByteArrayOutputStream stream, String value) throws IOException
+	private void writeString(String value) throws IOException
 	{
 		char[] chars = value.toCharArray();
-		writeInt(stream, chars.length);
-
-		ByteBuffer buffer = ByteBuffer.allocate(2);
+		writeInteger(chars.length);
 
 		for (char ch: chars)
 		{
-			buffer.putChar(0, ch);
-			stream.write(buffer.array());
+			byteBuffer.putChar(0, ch);
+			byteStream.write(byteBuffer.array(), 0, 2);
 		}
 	}
 
-	private void encodeBoolean(ByteArrayOutputStream stream, boolean value) throws IOException
+	private void encodeBoolean(boolean value) throws IOException
 	{
-		stream.write(value ? Types.T_TRUE : Types.T_FALSE);
+		byteStream.write(value ? Types.T_TRUE : Types.T_FALSE);
 	}
 
-	private void encodeNull(ByteArrayOutputStream stream) throws IOException
+	private void encodeNull() throws IOException
 	{
-		stream.write(Types.T_NULL);
+		byteStream.write(Types.T_NULL);
 	}
 
-	private void encodeDate(ByteArrayOutputStream stream, Date value) throws IOException
+	private void encodeDate(Date value) throws IOException
 	{
-		stream.write(Types.T_DATE);
-		writeDouble(stream, value.getTime());
+		byteStream.write(Types.T_DATE);
+		writeDouble(value.getTime());
 	}
 
-	private void encodeArray(ByteArrayOutputStream stream, Object[] value) throws Exception
+	private void encodeArray(Object[] value) throws Exception
 	{
 		int length = Array.getLength(value);
 
-		stream.write(Types.T_ARRAY);
-		writeInt(stream, length);
+		byteStream.write(Types.T_ARRAY);
+		writeInteger(length);
 
 		for (int i = 0; i < length; i++)
 		{
-			encodeValue(stream, value[i]);
+			encodeValue(value[i]);
 		}
 	}
 
-	private void encodeMap(ByteArrayOutputStream stream, Map<Object, Object> map) throws Exception
+	private void encodeMap(Map<Object, Object> map) throws Exception
 	{
-		stream.write(Types.T_MAP);
-		writeInt(stream, map.size());
+		byteStream.write(Types.T_MAP);
+		writeInteger(map.size());
 
 		for (Object key : map.keySet())
 		{
-			writeString(stream, key.toString());
-			encodeValue(stream, map.get(key));
+			writeString(key.toString());
+			encodeValue(map.get(key));
 		}
 	}
 
-	private void encodeTypedObject(ByteArrayOutputStream stream, Object object) throws Exception
+	private void encodeTypedObject(Object object) throws Exception
 	{
 		String typeName = object.getClass().getName();
 		TypeHolder type = Serializer.getTypeByName(typeName);
 
-		stream.write(Types.T_OBJECT);
-		writeInt(stream, type.index);
+		byteStream.write(Types.T_OBJECT);
+		writeInteger(type.index);
 
 		for (Field field : type.fields)
 		{
-			encodeValue(stream, field.get(object));
+			encodeValue(field.get(object));
 		}
 	}
 
