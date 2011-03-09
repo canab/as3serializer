@@ -11,7 +11,6 @@ public class SimpleTypesTest
 	@Test
 	public void testInteger() throws Exception
 	{
-/*
 		testValue(0);
 		testValue(0xFF);
 		testValue(0xFF - 1);
@@ -22,7 +21,7 @@ public class SimpleTypesTest
 		testValue(0xFFFFFF);
 		testValue(0xFFFFFF - 1);
 		testValue(0xFFFFFF + 1);
-*/
+
 		testValue(Integer.MIN_VALUE);
 		testValue(Integer.MIN_VALUE + 1);
 		testValue(Integer.MAX_VALUE);
@@ -45,6 +44,7 @@ public class SimpleTypesTest
 	@Test
 	public void testString() throws Exception
 	{
+		testValue("йцукен");
 		testValue("");
 		testValue("qwerty");
 		testValue("йцукен");

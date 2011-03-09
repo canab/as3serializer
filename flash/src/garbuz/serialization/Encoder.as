@@ -120,14 +120,10 @@ package garbuz.serialization
 
 		private function writeString(value:String):void
 		{
-			var length:int = value.length;
-
-			encodeInt(length);
-
-			for (var i:int = 0; i < length; i++)
-			{
-				_bytes.writeShort(value.charCodeAt(i))
-			}
+			var utfBytes:ByteArray = new ByteArray();
+			utfBytes.writeUTFBytes(value);
+			encodeInt(utfBytes.length);
+			_bytes.writeBytes(utfBytes);
 		}
 
 		private function encodeBoolean(value:Boolean):void

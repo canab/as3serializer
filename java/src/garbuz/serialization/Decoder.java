@@ -162,14 +162,11 @@ final class Decoder
 	private String decodeString() throws Exception
 	{
 		int length = (Integer) decodeValue();
-		char[] chars = new char[length];
-
-		for (int i = 0; i < length; i++)
-		{
-			chars[i] = byteBuffer.getChar();
-		}
-
-		return new String(chars);
+		int limit = byteBuffer.limit();
+		byteBuffer.limit(byteBuffer.position() + length);
+		String string = Serializer.charset.decode(byteBuffer).toString();
+		byteBuffer.limit(limit);
+		return string;
 	}
 
 	private Date decodeDate() throws IOException

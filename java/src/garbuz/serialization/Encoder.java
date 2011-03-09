@@ -140,7 +140,7 @@ final class Encoder
 		byteStream.write(byteBuffer.array(), 0, 8);
 	}
 
-	private void encodeString(String value) throws IOException
+	private void encodeString(String value) throws Exception
 	{
 		byteStream.write(Types.T_STRING);
 		writeString(value);
@@ -148,14 +148,12 @@ final class Encoder
 
 	private void writeString(String value) throws IOException
 	{
-		char[] chars = value.toCharArray();
-		encodeInteger(chars.length);
-
-		for (char ch: chars)
-		{
-			byteBuffer.putChar(0, ch);
-			byteStream.write(byteBuffer.array(), 0, 2);
-		}
+		ByteBuffer stringBuffer = Serializer.charset.encode(value);
+		int length = stringBuffer.limit();
+		byte[] bytes = new byte[length];
+		stringBuffer.get(bytes);
+		encodeInteger(length);
+		byteStream.write(bytes);
 	}
 
 	private void encodeBoolean(boolean value) throws IOException

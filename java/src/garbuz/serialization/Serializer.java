@@ -1,5 +1,6 @@
 package garbuz.serialization;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +8,10 @@ import java.util.Map;
 
 public final class Serializer
 {
+	protected static final Charset charset = Charset.forName("UTF8");
+	
 	private static final Map<String, TypeHolder> typesByName = new HashMap<String, TypeHolder>();
+
 	private static final List<TypeHolder> typesByIndex = new ArrayList<TypeHolder>();
 
 	private static final Object lock = new Object();

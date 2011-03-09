@@ -41,9 +41,9 @@ package localTests
 		[Test]
 		public function testString():void
 		{
-			//testValue("");
-			//testValue("qwerty");
+			testValue("");
 			testValue("й");
+			testValue("qwerty");
 			testValue("йцукен");
 			testValue("qwertyйцукен");
 		}
