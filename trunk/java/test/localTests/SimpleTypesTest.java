@@ -11,11 +11,22 @@ public class SimpleTypesTest
 	@Test
 	public void testInteger() throws Exception
 	{
+/*
 		testValue(0);
-		testValue(12);
-		testValue(-12);
-		testValue(Integer.MAX_VALUE);
+		testValue(0xFF);
+		testValue(0xFF - 1);
+		testValue(0xFF + 1);
+		testValue(0xFFFF);
+		testValue(0xFFFF - 1);
+		testValue(0xFFFF + 1);
+		testValue(0xFFFFFF);
+		testValue(0xFFFFFF - 1);
+		testValue(0xFFFFFF + 1);
+*/
 		testValue(Integer.MIN_VALUE);
+		testValue(Integer.MIN_VALUE + 1);
+		testValue(Integer.MAX_VALUE);
+		testValue(Integer.MAX_VALUE - 1);
 	}
 
 	@Test

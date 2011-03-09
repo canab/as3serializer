@@ -44,8 +44,66 @@ package garbuz.serialization
 
 		private function encodeInt(value:int):void
 		{
-			_bytes.writeByte(Types.T_INT);
-			_bytes.writeInt(value)
+			var unsigned:uint = (value >= 0) ? value : -value;
+
+			if (value >= 0)
+			{
+				if (unsigned <= 0xFF)
+				{
+					_bytes.writeByte(Types.T_UINT1);
+					_bytes.writeByte(unsigned);
+				}
+				else if (unsigned <= 0xFFFF)
+				{
+					_bytes.writeByte(Types.T_UINT2);
+					_bytes.writeByte(unsigned & 0xFF);
+					_bytes.writeByte(unsigned >> 8);
+				}
+				else if (unsigned <= 0xFFFFFF)
+				{
+					_bytes.writeByte(Types.T_UINT3);
+					_bytes.writeByte(unsigned & 0xFF);
+					_bytes.writeByte((unsigned >> 8) & 0xFF);
+					_bytes.writeByte((unsigned >> 16));
+				}
+				else
+				{
+					_bytes.writeByte(Types.T_UINT4);
+					_bytes.writeByte(unsigned & 0xFF);
+					_bytes.writeByte((unsigned >> 8) & 0xFF);
+					_bytes.writeByte((unsigned >> 16) & 0xFF);
+					_bytes.writeByte((unsigned >> 24));
+				}
+			}
+			else
+			{
+				if (unsigned <= 0xFF)
+				{
+					_bytes.writeByte(Types.T_NINT1);
+					_bytes.writeByte(unsigned);
+				}
+				else if (unsigned <= 0xFFFF)
+				{
+					_bytes.writeByte(Types.T_NINT2);
+					_bytes.writeByte(unsigned & 0xFF);
+					_bytes.writeByte(unsigned >> 8);
+				}
+				else if (unsigned <= 0xFFFFFF)
+				{
+					_bytes.writeByte(Types.T_NINT3);
+					_bytes.writeByte(unsigned & 0xFF);
+					_bytes.writeByte((unsigned >> 8) & 0xFF);
+					_bytes.writeByte((unsigned >> 16));
+				}
+				else
+				{
+					_bytes.writeByte(Types.T_NINT4);
+					_bytes.writeByte(unsigned & 0xFF);
+					_bytes.writeByte((unsigned >> 8) & 0xFF);
+					_bytes.writeByte((unsigned >> 16) & 0xFF);
+					_bytes.writeByte((unsigned >> 24));
+				}
+			}
 		}
 
 		private function encodeDouble(value:Number):void
