@@ -3,13 +3,16 @@ package garbuz.serialization;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 final class Decoder
 {
 	private ByteBuffer byteBuffer;
+	private List<String> stringCache = new ArrayList<String>();
 
 	public Object decode(byte[] bytes) throws Exception
 	{
@@ -38,6 +41,9 @@ final class Decoder
 				break;
 			case Types.T_STRING:
 				value = decodeString();
+				break;
+			case Types.T_STRING_REF:
+				value = decodeStringRef();
 				break;
 			case Types.T_DOUBLE:
 				value = decodeDouble();
@@ -166,7 +172,16 @@ final class Decoder
 		byteBuffer.limit(byteBuffer.position() + length);
 		String string = Serializer.charset.decode(byteBuffer).toString();
 		byteBuffer.limit(limit);
+
+		stringCache.add(string);
+
 		return string;
+	}
+
+	private String decodeStringRef() throws Exception
+	{
+		Integer ref = (Integer) decodeValue();
+		return stringCache.get(ref);
 	}
 
 	private Date decodeDate() throws IOException
@@ -182,7 +197,7 @@ final class Decoder
 
 		for (int i = 0; i < keyCount; i++)
 		{
-			String key = decodeString();
+			String key = (String) decodeValue();
 			Object value = decodeValue();
 			map.put(key, value);
 		}

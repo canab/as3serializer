@@ -7,6 +7,7 @@ package garbuz.serialization
 	{
 		private var _encodeMethods:Object = {};
 		private var _bytes:ByteArray;
+		private var _stringRefs:Array;
 
 		public function Encoder()
 		{
@@ -19,6 +20,7 @@ package garbuz.serialization
 		public function encode(value:Object):ByteArray
 		{
 			_bytes = new ByteArray();
+			_stringRefs = [];
 			encodeValue(value);
 			return _bytes;
 		}
@@ -114,16 +116,22 @@ package garbuz.serialization
 
 		private function encodeString(value:String):void
 		{
-			_bytes.writeByte(Types.T_STRING);
-			writeString(value);
-		}
+			var ref:int = _stringRefs.indexOf(value);
+			if (ref >= 0)
+			{
+				_bytes.writeByte(Types.T_STRING_REF);
+				encodeInt(ref);
+			}
+			else
+			{
+				_bytes.writeByte(Types.T_STRING);
+				var utfBytes:ByteArray = new ByteArray();
+				utfBytes.writeUTFBytes(value);
+				encodeInt(utfBytes.length);
+				_bytes.writeBytes(utfBytes);
 
-		private function writeString(value:String):void
-		{
-			var utfBytes:ByteArray = new ByteArray();
-			utfBytes.writeUTFBytes(value);
-			encodeInt(utfBytes.length);
-			_bytes.writeBytes(utfBytes);
+				_stringRefs.push(value);
+			}
 		}
 
 		private function encodeBoolean(value:Boolean):void
@@ -184,7 +192,7 @@ package garbuz.serialization
 
 			for each (property in properties)
 			{
-				writeString(property);
+				encodeString(property);
 				encodeValue(object[property]);
 			}
 		}
