@@ -1,0 +1,49 @@
+﻿<project name="serializer" basedir="." default="build">
+
+	<property file="local.properties"/>
+
+	<taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask">
+		<classpath>
+			<pathelement location="lib/svnant.jar"/>
+			<pathelement location="lib/svnClientAdapter.jar"/>
+			<pathelement location="lib/svnjavahl.jar"/>
+			<pathelement location="lib/svnkit.jar"/>
+		</classpath>
+	</taskdef>
+
+	<target name="clean">
+		<delete dir="${output.dir}"/>
+		<mkdir dir="${output.dir}"/>
+	</target>
+
+	<target name="buildNumber">
+		<svn>
+			<status path=".." revisionProperty="build.number"/>
+		</svn>
+		<echo>revision #${build.number}</echo>
+	</target>
+
+	<target name="build" depends="clean, buildFlash, buildJava"/>
+
+	<target name="buildFlash" depends="buildNumber">
+		<property name="swc.name" value="serializer-r${build.number}.swc"/>
+
+		<exec executable="${flex.sdk.dir}/bin/${compc.compiler}" failonerror="true">
+			<arg line="-debug=${build.debug}"/>
+			<arg line="-source-path+=../flash/src"/>
+			<arg line="-include-sources+=../flash/src"/>
+			<arg line="-output=${output.dir}/${swc.name}"/>
+		</exec>
+	</target>
+
+	<target name="buildJava" depends="buildNumber">
+		<property name="jar.name" value="serializer-r${build.number}.jar"/>
+
+		<mkdir dir="${output.dir}/classes"/>
+
+		<javac destdir="${output.dir}/classes" debug="${build.debug}">
+			<src path="../java/src"/>
+		</javac>
+		
+	</target>
+</project>
