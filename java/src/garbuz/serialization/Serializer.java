@@ -7,9 +7,6 @@ import java.util.Map;
 
 public final class Serializer
 {
-	private static final Encoder encoder = new Encoder();
-	private static final Decoder decoder = new Decoder();
-
 	private static final Map<String, TypeHolder> typesByName = new HashMap<String, TypeHolder>();
 	private static final List<TypeHolder> typesByIndex = new ArrayList<TypeHolder>();
 
@@ -17,12 +14,12 @@ public final class Serializer
 
 	public static byte[] encode(Object value) throws Exception
 	{
-		return encoder.encode(value);
+		return new Encoder().encode(value);
 	}
 
 	public static Object decode(byte[] bytes) throws Exception
 	{
-		return decoder.decode(bytes);
+		return new Decoder().decode(bytes);
 	}
 
 	public static void registerType(String qualifiedName)

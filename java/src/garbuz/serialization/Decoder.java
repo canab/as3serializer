@@ -1,6 +1,5 @@
 package garbuz.serialization;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
@@ -10,30 +9,32 @@ import java.util.Map;
 
 final class Decoder
 {
+	private ByteBuffer byteBuffer;
+
 	public Object decode(byte[] bytes) throws Exception
 	{
-		ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
-		Object value = decodeValue(byteStream);
+		byteBuffer = ByteBuffer.wrap(bytes);
+		Object value = decodeValue();
 		return value;
 
 	}
 
-	private Object decodeValue(ByteArrayInputStream stream) throws Exception
+	private Object decodeValue() throws Exception
 	{
-		int type = stream.read();
+		int type = byteBuffer.get();
 
 		Object value = null;
 
 		switch (type)
 		{
 			case Types.T_INT:
-				value = decodeInt(stream);
+				value = decodeInt();
 				break;
 			case Types.T_DOUBLE:
-				value = decodeDouble(stream);
+				value = decodeDouble();
 				break;
 			case Types.T_STRING:
-				value = decodeString(stream);
+				value = decodeString();
 				break;
 			case Types.T_TRUE:
 				value = true;
@@ -45,108 +46,88 @@ final class Decoder
 				value = null;
 				break;
 			case Types.T_DATE:
-				value = decodeDate(stream);
+				value = decodeDate();
 				break;
 			case Types.T_ARRAY:
-				value = decodeArray(stream);
+				value = decodeArray();
 				break;
 			case Types.T_MAP:
-				value = decodeMap(stream);
+				value = decodeMap();
 				break;
 			case Types.T_OBJECT:
-				value = decodeObject(stream);
+				value = decodeObject();
 				break;
 		}
 
 		return value;
 	}
 
-	private Object decodeArray(ByteArrayInputStream stream) throws Exception
+	private Object decodeArray() throws Exception
 	{
-		int length = decodeInt(stream);
+		int length = decodeInt();
 		Object[] array = new Object[length];
 
 		for (int i = 0; i < length; i++)
 		{
-			array[i] = decodeValue(stream);
+			array[i] = decodeValue();
 		}
 
 		return array;
 	}
 
-	private int decodeInt(ByteArrayInputStream stream) throws IOException
+	private int decodeInt() throws IOException
 	{
-		ByteBuffer buffer = ByteBuffer.allocate(4);
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-
-		return buffer.getInt(0);
+		return byteBuffer.getInt();
 	}
 
-	private Object decodeDouble(ByteArrayInputStream stream) throws IOException
+	private Object decodeDouble() throws IOException
 	{
-		ByteBuffer buffer = ByteBuffer.allocate(8);
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-		buffer.put((byte) stream.read());
-
-		return buffer.getDouble(0);
+		return byteBuffer.getDouble();
 	}
 
-	private String decodeString(ByteArrayInputStream stream) throws IOException
+	private String decodeString() throws IOException
 	{
-		ByteBuffer buffer = ByteBuffer.allocate(2);
-
-		int length = decodeInt(stream);
+		int length = decodeInt();
 		char[] chars = new char[length];
 
 		for (int i = 0; i < length; i++)
 		{
-			buffer.put(0, (byte) stream.read());
-			buffer.put(1, (byte) stream.read());
-			chars[i] = buffer.getChar(0);
+			chars[i] = byteBuffer.getChar();
 		}
 
 		return new String(chars);
 	}
 
-	private Date decodeDate(ByteArrayInputStream stream) throws IOException
+	private Date decodeDate() throws IOException
 	{
-		long time = ((Double) decodeDouble(stream)).longValue();
+		long time = ((Double) decodeDouble()).longValue();
 		return new Date(time);
 	}
 
-	private Map<String, Object> decodeMap(ByteArrayInputStream stream) throws Exception
+	private Map<String, Object> decodeMap() throws Exception
 	{
 		Map<String, Object> map = new HashMap<String, Object>();
-		int keyCount = decodeInt(stream);
+		int keyCount = decodeInt();
 
 		for (int i = 0; i < keyCount; i++)
 		{
-			String key = decodeString(stream);
-			Object value = decodeValue(stream);
+			String key = decodeString();
+			Object value = decodeValue();
 			map.put(key, value);
 		}
 
 		return map;
 	}
 
-	private Object decodeObject(ByteArrayInputStream stream) throws Exception
+	private Object decodeObject() throws Exception
 	{
-		int typeIndex = decodeInt(stream);
+		int typeIndex = decodeInt();
 		TypeHolder type = Serializer.getTypeByIndex(typeIndex);
 		Object object = type.classRef.newInstance();
 
 		for (Field field : type.fields)
 		{
-			Object value = decodeValue(stream);
+			Object value = decodeValue();
 			field.set(object, value);
 		}
 

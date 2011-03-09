@@ -17,6 +17,7 @@
 	</target>
 
 	<target name="buildNumber">
+		<property name="build.number" value=""/>
 		<svn>
 			<status path=".." revisionProperty="build.number"/>
 		</svn>
