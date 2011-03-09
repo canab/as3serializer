@@ -49,7 +49,7 @@ package garbuz.serialization
 
 		private function decodeString():String
 		{
-			var length:int = _bytes.readInt();
+			var length:int = int(decodeValue());
 			var string:String = "";
 
 			for (var i:int = 0; i < length; i++)
@@ -80,7 +80,7 @@ package garbuz.serialization
 
 		private function decodeArray():Array
 		{
-			var length:int = _bytes.readInt();
+			var length:int = int(decodeValue());
 			var array:Array = [];
 
 			for (var i:int = 0; i < length; i++)
@@ -94,7 +94,7 @@ package garbuz.serialization
 		private function decodeMap():Object
 		{
 			var object:Object = {};
-			var propCount:int = _bytes.readInt();
+			var propCount:int = int(decodeValue());
 
 			for (var i:int = 0; i < propCount; i++)
 			{
@@ -115,7 +115,7 @@ package garbuz.serialization
 
 		private function decodeTypedObject():Object
 		{
-			var typeIndex:int = _bytes.readInt();
+			var typeIndex:int = int(decodeValue());
 			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
 			var object:Object = new (type.classRef)();
 
