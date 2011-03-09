@@ -6,6 +6,7 @@ package garbuz.serialization
 	{
 		private var _decodeMethods:Array = [];
 		private var _bytes:ByteArray;
+		private var _stringRefs:Array;
 
 		public function Decoder()
 		{
@@ -15,6 +16,8 @@ package garbuz.serialization
 			_decodeMethods[Types.T_FALSE] = decodeFalse;
 
 			_decodeMethods[Types.T_STRING] = decodeString;
+			_decodeMethods[Types.T_STRING_REF] = decodeStringRef;
+
 			_decodeMethods[Types.T_DOUBLE] = decodeDouble;
 			_decodeMethods[Types.T_DATE] = decodeDate;
 			_decodeMethods[Types.T_MAP] = decodeMap;
@@ -37,6 +40,7 @@ package garbuz.serialization
 		{
 			_bytes = bytes;
 			_bytes.position = 0;
+			_stringRefs = [];
 			
 			return decodeValue();
 		}
@@ -115,7 +119,15 @@ package garbuz.serialization
 		private function decodeString():String
 		{
 			var length:int = int(decodeValue());
-			return _bytes.readUTFBytes(length);
+			var string:String = _bytes.readUTFBytes(length);
+			_stringRefs.push(string);
+			return string;
+		}
+
+		private function decodeStringRef():String
+		{
+			var ref:int = int(decodeValue());
+			return _stringRefs[ref];
 		}
 
 		//noinspection JSUnusedLocalSymbols
@@ -156,7 +168,7 @@ package garbuz.serialization
 
 			for (var i:int = 0; i < propCount; i++)
 			{
-				var propName:String = decodeString();
+				var propName:String = String(decodeValue());
 				var propValue:Object = decodeValue();
 				object[propName] = propValue;
 			}

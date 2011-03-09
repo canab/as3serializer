@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings({"ConstantConditions"})
@@ -13,6 +14,7 @@ final class Encoder
 {
 	private ByteArrayOutputStream byteStream;
 	private ByteBuffer byteBuffer = ByteBuffer.allocate(8);
+	private Map<String, Integer> stringCache = new HashMap<String, Integer>();
 
 	public byte[] encode(Object value) throws Exception
 	{
@@ -142,18 +144,25 @@ final class Encoder
 
 	private void encodeString(String value) throws Exception
 	{
-		byteStream.write(Types.T_STRING);
-		writeString(value);
-	}
+		Integer ref = stringCache.get(value);
+		if (ref != null)
+		{
+			byteStream.write(Types.T_STRING_REF);
+			encodeInteger(ref);
+		}
+		else
+		{
+			byteStream.write(Types.T_STRING);
 
-	private void writeString(String value) throws IOException
-	{
-		ByteBuffer stringBuffer = Serializer.charset.encode(value);
-		int length = stringBuffer.limit();
-		byte[] bytes = new byte[length];
-		stringBuffer.get(bytes);
-		encodeInteger(length);
-		byteStream.write(bytes);
+			ByteBuffer stringBuffer = Serializer.charset.encode(value);
+			int length = stringBuffer.limit();
+			byte[] bytes = new byte[length];
+			stringBuffer.get(bytes);
+			encodeInteger(length);
+			byteStream.write(bytes);
+
+			stringCache.put(value, stringCache.size());
+		}
 	}
 
 	private void encodeBoolean(boolean value) throws IOException
@@ -192,7 +201,7 @@ final class Encoder
 
 		for (Object key : map.keySet())
 		{
-			writeString(key.toString());
+			encodeString(key.toString());
 			encodeValue(map.get(key));
 		}
 	}
