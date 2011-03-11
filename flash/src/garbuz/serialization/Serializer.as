@@ -24,22 +24,26 @@ package garbuz.serialization
 
 		public static function registerType(qualifiedName:String):void
 		{
-			if (!(qualifiedName in _typesByName))
+			var typeName:String = qualifiedName.replace("::", ".");
+
+			if (!(typeName in _typesByName))
 			{
 				var index:int = _typesByIndex.length;
-				var type:TypeHolder = new TypeHolder(index, qualifiedName);
+				var type:TypeHolder = new TypeHolder(index, typeName);
 
-				_typesByName[qualifiedName] = type;
+				_typesByName[typeName] = type;
 				_typesByIndex[index] = type;
 			}
 		}
 
 		internal static function getTypeByName(qualifiedName:String):TypeHolder
 		{
-			var type:TypeHolder = _typesByName[qualifiedName];
+			var typeName:String = qualifiedName.replace("::", ".");
+
+			var type:TypeHolder = _typesByName[typeName];
 
 			if (!type)
-				throw new Error("Type " + qualifiedName + " is not registered");
+				throw new Error("Type " + typeName + " is not registered");
 
 			if (!type.initialized)
 				type.initialize();
