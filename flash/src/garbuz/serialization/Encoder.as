@@ -19,7 +19,7 @@ package garbuz.serialization
 
 		public function encode(value:Object):ByteArray
 		{
-			_bytes.position = 0;
+			_bytes = new ByteArray();
 			_bytes.length = 0;
 			_stringRefs = [];
 			encodeValue(value);

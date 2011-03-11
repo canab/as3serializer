@@ -48,8 +48,8 @@ package localTests
 			time3 = getTimer() - time3;
 
 			testValue(array);
-			assertEquals(time1, time2);
-			assertEquals(time1, time3);
+//			assertEquals(time1, time2);
+//			assertEquals(time1, time3);
 
 //			assertEquals(bytes1.length, bytes2.length);
 //			assertEquals(bytes1.length, bytes3.length);
