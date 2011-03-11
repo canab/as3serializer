@@ -4,12 +4,27 @@ import garbuz.serialization.Serializer;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CollectionsTest
 {
+	@Test
+	public void testArrayList() throws Exception
+	{
+		Object[] array1 = new Object[]{1, 2, 3};
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		arrayList.add(1);
+		arrayList.add(2);
+		arrayList.add(3);
+
+		byte[] bytes = Serializer.encode(arrayList);
+		Object result = Serializer.decode(bytes);
+		Assert.assertArrayEquals(arrayList.toArray(), (Object[]) result);
+	}
+
 	@Test
 	public void testArrays() throws Exception
 	{

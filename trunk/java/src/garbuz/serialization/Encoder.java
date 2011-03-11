@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,10 @@ final class Encoder
 		else if (value == null)
 		{
 			encodeNull();
+		}
+		else if (value instanceof Collection)
+		{
+			encodeArray(((Collection) value).toArray());
 		}
 		else if (value.getClass().isArray())
 		{

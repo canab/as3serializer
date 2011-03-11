@@ -27,7 +27,8 @@
 	<target name="build" depends="clean, buildFlash, buildJava"/>
 
 	<target name="buildFlash" depends="buildNumber">
-		<property name="swc.name" value="serializer-r${build.number}.swc"/>
+		<!--property name="swc.name" value="serializer-r${build.number}.swc"/-->
+		<property name="swc.name" value="serializer.swc"/>
 
 		<exec executable="${flex.sdk.dir}/bin/${compc.compiler}" failonerror="true">
 			<arg line="-debug=${build.debug}"/>
@@ -38,7 +39,8 @@
 	</target>
 
 	<target name="buildJava" depends="buildNumber">
-		<property name="jar.name" value="serializer-r${build.number}.jar"/>
+		<!--property name="jar.name" value="serializer-r${build.number}.jar"/-->
+		<property name="jar.name" value="serializer.jar"/>
 		<property name="java.output.dir" value="${output.dir}/classes"/>
 
 		<mkdir dir="${java.output.dir}"/>
