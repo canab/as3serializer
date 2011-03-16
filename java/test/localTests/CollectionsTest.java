@@ -1,7 +1,10 @@
 package localTests;
 
+import data.OtherObject;
+import data.SampleObject;
 import garbuz.serialization.Serializer;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,6 +14,13 @@ import java.util.Map;
 
 public class CollectionsTest
 {
+	@BeforeClass
+	public static void setUp()
+	{
+		Serializer.registerType(SampleObject.class.getName());
+		Serializer.registerType(OtherObject.class.getName());
+	}
+
 	@Test
 	public void testArrayList() throws Exception
 	{
@@ -35,6 +45,19 @@ public class CollectionsTest
 		testArray(array1);
 		testArray(array2);
 		testArray(new Object[]{array1, array2});
+	}
+
+	@Test
+	public void testList() throws Exception
+	{
+		OtherObject otherObject = new OtherObject();
+		otherObject.array = new ArrayList<SampleObject>();
+		otherObject.array.add(new SampleObject());
+		otherObject.array.add(new SampleObject());
+
+		byte[] bytes = Serializer.encode(otherObject);
+		OtherObject result = (OtherObject) Serializer.decode(bytes);
+		Assert.assertArrayEquals(otherObject.array.get(0).arrayValue, result.array.get(0).arrayValue);
 	}
 
 	@Test

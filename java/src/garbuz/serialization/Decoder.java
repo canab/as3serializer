@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -214,9 +215,14 @@ final class Decoder
 		for (Field field : type.fields)
 		{
 			Object value = decodeValue();
+
+			if (value.getClass().isArray() && !field.getType().isArray())
+				value = Arrays.asList((Object[]) value);
+
 			field.set(object, value);
 		}
 
 		return object;
 	}
+
 }
