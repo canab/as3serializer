@@ -1,5 +1,6 @@
 package localTests
 {
+	import data.OtherObject;
 	import data.SampleObject;
 
 	import flash.utils.getQualifiedClassName;
@@ -12,12 +13,17 @@ package localTests
 		public static function setUp():void
 		{
 			Serializer.registerType(getQualifiedClassName(SampleObject));
+			Serializer.registerType(getQualifiedClassName(OtherObject));
 		}
 
 		[Test]
 		public function testObject():void
 		{
 			testValue(new SampleObject());
+
+			var otherObject:OtherObject = new OtherObject();
+			otherObject.array = [new SampleObject(), new SampleObject()];
+			testValue(otherObject);
 		}
 
 		[Test]

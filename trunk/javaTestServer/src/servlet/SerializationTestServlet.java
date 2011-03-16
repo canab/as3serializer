@@ -1,5 +1,6 @@
 package servlet;
 
+import data.OtherObject;
 import data.SampleObject;
 import garbuz.serialization.Serializer;
 import sun.misc.BASE64Decoder;
@@ -20,6 +21,7 @@ public class SerializationTestServlet extends HttpServlet
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		Serializer.registerType(SampleObject.class.getName());
+		Serializer.registerType(OtherObject.class.getName());
 
 		try
 		{

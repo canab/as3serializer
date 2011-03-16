@@ -1,5 +1,6 @@
 package remoteTests
 {
+	import data.OtherObject;
 	import data.SampleObject;
 
 	import flash.events.Event;
@@ -52,8 +53,8 @@ package remoteTests
 		{
 			sendRequest([
 				"qwerty",
-				"éöóêåí",
-				"qwertyéöóêåí"
+				"Ğ¹Ñ†ÑƒĞºĞµĞ½",
+				"qwertyĞ¹Ñ†ÑƒĞºĞµĞ½"
 			]);
 		}
 
@@ -86,6 +87,14 @@ package remoteTests
 		}
 
 		[Test(async)]
+		public function testList():void
+		{
+			var object:OtherObject = new OtherObject();
+			object.array = [new SampleObject()];
+			sendRequest(object);
+		}
+
+		[Test(async)]
 		public function testMap():void
 		{
 			var map:Object =
@@ -106,6 +115,7 @@ package remoteTests
 		public static function setUp():void
 		{
 			Serializer.registerType(getQualifiedClassName(SampleObject));
+			Serializer.registerType(getQualifiedClassName(OtherObject));
 		}
 
 		[Test(async)]
@@ -113,7 +123,6 @@ package remoteTests
 		{
 			sendRequest(new SampleObject());
 		}
-
 
 		private function sendRequest(value:Object):void
 		{
