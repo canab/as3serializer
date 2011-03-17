@@ -17,12 +17,21 @@ package localTests
 		}
 
 		[Test]
+		public function testVector():void
+		{
+			testValue(new <SampleObject>[new SampleObject(), new SampleObject()]);
+		}
+
+		[Test]
 		public function testObject():void
 		{
 			testValue(new SampleObject());
 
 			var otherObject:OtherObject = new OtherObject();
+			testValue(otherObject);
+
 			otherObject.array = [new SampleObject(), new SampleObject()];
+			otherObject.vector = new <SampleObject>[new SampleObject(), new SampleObject()];
 			testValue(otherObject);
 		}
 

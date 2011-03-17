@@ -15,14 +15,15 @@ final class Types
 	public static final int T_MAP = 7;
 	public static final int T_ARRAY = 8;
 	public static final int T_OBJECT = 9;
+	public static final int T_VECTOR = 10;
 
-	public static final int T_UINT1 = 11;
-	public static final int T_UINT2 = 12;
-	public static final int T_UINT3 = 13;
-	public static final int T_UINT4 = 14;
+	public static final int T_UINT1 = 21;
+	public static final int T_UINT2 = 22;
+	public static final int T_UINT3 = 23;
+	public static final int T_UINT4 = 24;
 
-	public static final int T_NINT1 = 21;
-	public static final int T_NINT2 = 22;
-	public static final int T_NINT3 = 23;
-	public static final int T_NINT4 = 24;
+	public static final int T_NINT1 = 31;
+	public static final int T_NINT2 = 32;
+	public static final int T_NINT3 = 33;
+	public static final int T_NINT4 = 34;
 }

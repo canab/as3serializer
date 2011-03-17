@@ -4,5 +4,6 @@ import java.util.List;
 
 public class OtherObject
 {
-	public List<SampleObject> array;
+	public Object[] array;
+	public List<SampleObject> vector;
 }

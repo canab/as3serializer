@@ -15,15 +15,16 @@ package garbuz.serialization
 		public static const T_MAP:int = 7;
 		public static const T_ARRAY:int = 8;
 		public static const T_OBJECT:int = 9;
+		public static const T_VECTOR:int = 10;
 
-		public static const T_UINT1:int = 11;
-		public static const T_UINT2:int = 12;
-		public static const T_UINT3:int = 13;
-		public static const T_UINT4:int = 14;
+		public static const T_UINT1:int = 21;
+		public static const T_UINT2:int = 22;
+		public static const T_UINT3:int = 23;
+		public static const T_UINT4:int = 24;
 
-		public static const T_NINT1:int = 21;
-		public static const T_NINT2:int = 22;
-		public static const T_NINT3:int = 23;
-		public static const T_NINT4:int = 24;
+		public static const T_NINT1:int = 31;
+		public static const T_NINT2:int = 32;
+		public static const T_NINT3:int = 33;
+		public static const T_NINT4:int = 34;
 	}
 }

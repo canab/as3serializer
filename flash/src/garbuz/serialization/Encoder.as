@@ -160,8 +160,29 @@ package garbuz.serialization
 
 				if (typeName == "Object")
 					encodeMap(object);
+				else if (typeName.indexOf("__AS3__.vec::Vector") == 0)
+					encodeVector(object, typeName);
 				else
 					encodeTypedObject(object, typeName);
+			}
+		}
+
+		private function encodeVector(vector:Object, typeName:String):void
+		{
+			var index1:int = typeName.indexOf("<");
+			var index2:int = typeName.indexOf(">");
+			var itemTypeName:String = typeName.substring(index1 + 1, index2);
+			var type:TypeHolder = Serializer.getTypeByName(itemTypeName);
+
+			var length:uint = vector.length;
+
+			_bytes.writeByte(Types.T_VECTOR);
+			encodeInt(type.index);
+			encodeInt(length);
+
+			for (var i:int = 0; i < length; i++)
+			{
+				encodeValue(vector[i]);
 			}
 		}
 

@@ -91,6 +91,7 @@ package remoteTests
 		{
 			var object:OtherObject = new OtherObject();
 			object.array = [new SampleObject()];
+			object.vector = new <SampleObject>[new SampleObject()];
 			sendRequest(object);
 		}
 
