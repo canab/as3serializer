@@ -8,6 +8,7 @@ package garbuz.serialization
 		public var index:int;
 		public var className:String;
 		public var classRef:Class;
+		public var vectorClassRef:Class;
 		public var properties:Array = [];
 		public var initialized:Boolean = false;
 
@@ -20,6 +21,7 @@ package garbuz.serialization
 		public function initialize():void
 		{
 			classRef = Class(getDefinitionByName(className));
+			vectorClassRef = Class(getDefinitionByName("__AS3__.vec::Vector.<" + className + ">"));
 			resolveProperties();
 			initialized = true;
 		}

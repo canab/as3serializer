@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"ConstantConditions"})
@@ -57,9 +57,9 @@ final class Encoder
 		{
 			encodeNull();
 		}
-		else if (value instanceof Collection)
+		else if (value instanceof List)
 		{
-			encodeArray(((Collection) value).toArray());
+			encodeVector((List) value);
 		}
 		else if (value.getClass().isArray())
 		{
@@ -222,6 +222,27 @@ final class Encoder
 		for (Field field : type.fields)
 		{
 			encodeValue(field.get(object));
+		}
+	}
+
+	private void encodeVector(List vector) throws Exception
+	{
+		byteStream.write(Types.T_VECTOR);
+
+		Boolean typeWritten = false;
+
+		for (Object object : vector)
+		{
+			if (!typeWritten)
+			{
+				String typeName = object.getClass().getName();
+				TypeHolder type = Serializer.getTypeByName(typeName);
+				encodeInteger(type.index);
+				encodeInteger(vector.size());
+				typeWritten = true;
+			}
+
+			encodeValue(object);
 		}
 	}
 

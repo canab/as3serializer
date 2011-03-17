@@ -59,6 +59,8 @@ package
 				compareDates(source as Date, target as Date);
 			else if (sourceType=="Array")
 				compareArrays(source as Array, target as Array);
+			else if (sourceType.indexOf("__AS3__.vec::Vector") == 0)
+				compareVectors(source as Object, target as Object);
 			if (sourceType=="Objects")
 				compareMaps(source, target);
 			else
@@ -83,7 +85,7 @@ package
 			var properties:Array = [];
 
 			var description:XML = describeType(object);
-			var variables:XMLList = description.factory.variable;
+			var variables:XMLList = description.variable;
 
 			for each (var variable:XML in variables)
 			{
@@ -121,6 +123,20 @@ package
 		}
 
 		private static function compareArrays(source:Array, target:Array):void
+		{
+			if (source.length != target.length)
+			{
+				doFail(source, target);
+				return;
+			}
+
+			for (var i:int = 0; i < source.length; i++)
+			{
+				deepCompare(source[i], target[i]);
+			}
+		}
+
+		private static function compareVectors(source:Object, target:Object):void
 		{
 			if (source.length != target.length)
 			{

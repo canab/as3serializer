@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CollectionsTest
@@ -24,15 +25,13 @@ public class CollectionsTest
 	@Test
 	public void testArrayList() throws Exception
 	{
-		Object[] array1 = new Object[]{1, 2, 3};
-		ArrayList<Object> arrayList = new ArrayList<Object>();
-		arrayList.add(1);
-		arrayList.add(2);
-		arrayList.add(3);
+		ArrayList<SampleObject> arrayList = new ArrayList<SampleObject>();
+		arrayList.add(new SampleObject());
+		arrayList.add(new SampleObject());
 
 		byte[] bytes = Serializer.encode(arrayList);
-		Object result = Serializer.decode(bytes);
-		Assert.assertArrayEquals(arrayList.toArray(), (Object[]) result);
+		List result = (List) Serializer.decode(bytes);
+		Assert.assertArrayEquals(arrayList.get(0).arrayValue, ((SampleObject) result.get(0)).arrayValue);
 	}
 
 	@Test
@@ -51,13 +50,13 @@ public class CollectionsTest
 	public void testList() throws Exception
 	{
 		OtherObject otherObject = new OtherObject();
-		otherObject.array = new ArrayList<SampleObject>();
-		otherObject.array.add(new SampleObject());
-		otherObject.array.add(new SampleObject());
+		otherObject.vector = new ArrayList<SampleObject>();
+		otherObject.vector.add(new SampleObject());
+		otherObject.vector.add(new SampleObject());
 
 		byte[] bytes = Serializer.encode(otherObject);
 		OtherObject result = (OtherObject) Serializer.decode(bytes);
-		Assert.assertArrayEquals(otherObject.array.get(0).arrayValue, result.array.get(0).arrayValue);
+		Assert.assertArrayEquals(otherObject.vector.get(0).arrayValue, result.vector.get(0).arrayValue);
 	}
 
 	@Test

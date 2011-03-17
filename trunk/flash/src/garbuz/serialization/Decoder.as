@@ -23,6 +23,7 @@ package garbuz.serialization
 			_decodeMethods[Types.T_MAP] = decodeMap;
 			_decodeMethods[Types.T_ARRAY] = decodeArray;
 			_decodeMethods[Types.T_OBJECT] = decodeTypedObject;
+			_decodeMethods[Types.T_VECTOR] = decodeVector;
 
 			_decodeMethods[Types.T_UINT1] = decodeUInt1;
 			_decodeMethods[Types.T_UINT2] = decodeUInt2;
@@ -159,6 +160,22 @@ package garbuz.serialization
 			}
 
 			return array;
+		}
+
+		private function decodeVector():Object
+		{
+			var typeIndex:int = int(decodeValue());
+			var length:int = int(decodeValue());
+
+			var itemType:TypeHolder = Serializer.getTypeByIndex(typeIndex);
+			var vector:Object = new (itemType.vectorClassRef)();
+
+			for (var i:int = 0; i < length; i++)
+			{
+				vector.push(decodeValue());
+			}
+
+			return vector;
 		}
 
 		private function decodeMap():Object
