@@ -59,7 +59,7 @@ final class Encoder
 		}
 		else if (value instanceof List)
 		{
-			encodeVector((List) value);
+			encodeArray((List) value);
 		}
 		else if (value.getClass().isArray())
 		{
@@ -199,6 +199,17 @@ final class Encoder
 		}
 	}
 
+	private void encodeArray(List list) throws Exception
+	{
+		byteStream.write(Types.T_ARRAY);
+		encodeInteger(list.size());
+
+		for (Object item: list)
+		{
+			encodeValue(item);
+		}
+	}
+
 	private void encodeMap(Map<Object, Object> map) throws Exception
 	{
 		byteStream.write(Types.T_MAP);
@@ -224,26 +235,4 @@ final class Encoder
 			encodeValue(field.get(object));
 		}
 	}
-
-	private void encodeVector(List vector) throws Exception
-	{
-		byteStream.write(Types.T_VECTOR);
-
-		Boolean typeWritten = false;
-
-		for (Object object : vector)
-		{
-			if (!typeWritten)
-			{
-				String typeName = object.getClass().getName();
-				TypeHolder type = Serializer.getTypeByName(typeName);
-				encodeInteger(type.index);
-				encodeInteger(vector.size());
-				typeWritten = true;
-			}
-
-			encodeValue(object);
-		}
-	}
-
 }

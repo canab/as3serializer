@@ -3,6 +3,7 @@ package localTests
 	import data.OtherObject;
 	import data.SampleObject;
 
+	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
 
 	import garbuz.serialization.Serializer;
@@ -19,7 +20,10 @@ package localTests
 		[Test]
 		public function testVector():void
 		{
-			testValue(new <SampleObject>[new SampleObject(), new SampleObject()]);
+			var value:Vector.<SampleObject> = new <SampleObject>[new SampleObject(), new SampleObject()];
+			var bytes:ByteArray = Serializer.encode(value);
+			var decodedValue:Object = Serializer.decode(bytes);
+			deepCompare(value, Vector.<SampleObject>(decodedValue));
 		}
 
 		[Test]

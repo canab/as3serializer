@@ -15,7 +15,6 @@ final class Types
 	public static final int T_MAP = 7;
 	public static final int T_ARRAY = 8;
 	public static final int T_OBJECT = 9;
-	public static final int T_VECTOR = 10;
 
 	public static final int T_UINT1 = 21;
 	public static final int T_UINT2 = 22;

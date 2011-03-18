@@ -15,7 +15,6 @@ package garbuz.serialization
 		public static const T_MAP:int = 7;
 		public static const T_ARRAY:int = 8;
 		public static const T_OBJECT:int = 9;
-		public static const T_VECTOR:int = 10;
 
 		public static const T_UINT1:int = 21;
 		public static const T_UINT2:int = 22;
