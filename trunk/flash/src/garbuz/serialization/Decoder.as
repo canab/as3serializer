@@ -23,7 +23,6 @@ package garbuz.serialization
 			_decodeMethods[Types.T_MAP] = decodeMap;
 			_decodeMethods[Types.T_ARRAY] = decodeArray;
 			_decodeMethods[Types.T_OBJECT] = decodeTypedObject;
-			_decodeMethods[Types.T_VECTOR] = decodeVector;
 
 			_decodeMethods[Types.T_UINT1] = decodeUInt1;
 			_decodeMethods[Types.T_UINT2] = decodeUInt2;
@@ -34,7 +33,6 @@ package garbuz.serialization
 			_decodeMethods[Types.T_NINT2] = decodeNInt2;
 			_decodeMethods[Types.T_NINT3] = decodeNInt3;
 			_decodeMethods[Types.T_NINT4] = decodeNInt4;
-
 		}
 
 		public function decode(bytes:ByteArray):Object
@@ -162,22 +160,6 @@ package garbuz.serialization
 			return array;
 		}
 
-		private function decodeVector():Object
-		{
-			var typeIndex:int = int(decodeValue());
-			var length:int = int(decodeValue());
-
-			var itemType:TypeHolder = Serializer.getTypeByIndex(typeIndex);
-			var vector:Object = new (itemType.vectorClassRef)();
-
-			for (var i:int = 0; i < length; i++)
-			{
-				vector.push(decodeValue());
-			}
-
-			return vector;
-		}
-
 		private function decodeMap():Object
 		{
 			var object:Object = {};
@@ -206,12 +188,34 @@ package garbuz.serialization
 			var type:TypeHolder = Serializer.getTypeByIndex(typeIndex);
 			var object:Object = new (type.classRef)();
 
-			for each (var property:String in type.properties)
+			for each (var field:Field in type.fields)
 			{
-				object[property] = decodeValue();
+				if (field.vectorClass)
+					field.setValue(object, decodeVector(field.vectorClass));
+				else
+					field.setValue(object, decodeValue());
 			}
 
 			return object;
+		}
+
+		private function decodeVector(vectorClass:Class):Object
+		{
+			var vector:Object = new vectorClass();
+
+			var valueType:uint = _bytes.readUnsignedByte();
+
+			if (valueType == Types.T_NULL)
+				return null;
+
+			var length:int = int(decodeValue());
+
+			for (var i:int = 0; i < length; i++)
+			{
+				vector.push(decodeValue());
+			}
+
+			return vector;
 		}
 
 	}

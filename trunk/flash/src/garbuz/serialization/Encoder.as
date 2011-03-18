@@ -152,7 +152,7 @@ package garbuz.serialization
 			}
 			else if (object is Array)
 			{
-				encodeArray(object as Array);
+				encodeArray(object);
 			}
 			else
 			{
@@ -161,32 +161,13 @@ package garbuz.serialization
 				if (typeName == "Object")
 					encodeMap(object);
 				else if (typeName.indexOf("__AS3__.vec::Vector") == 0)
-					encodeVector(object, typeName);
+					encodeArray(object);
 				else
 					encodeTypedObject(object, typeName);
 			}
 		}
 
-		private function encodeVector(vector:Object, typeName:String):void
-		{
-			var index1:int = typeName.indexOf("<");
-			var index2:int = typeName.indexOf(">");
-			var itemTypeName:String = typeName.substring(index1 + 1, index2);
-			var type:TypeHolder = Serializer.getTypeByName(itemTypeName);
-
-			var length:uint = vector.length;
-
-			_bytes.writeByte(Types.T_VECTOR);
-			encodeInt(type.index);
-			encodeInt(length);
-
-			for (var i:int = 0; i < length; i++)
-			{
-				encodeValue(vector[i]);
-			}
-		}
-
-		private function encodeArray(array:Array):void
+		private function encodeArray(array:Object):void
 		{
 			var length:uint = array.length;
 
@@ -194,9 +175,9 @@ package garbuz.serialization
 
 			encodeInt(length);
 
-			for (var i:int = 0; i < length; i++)
+			for each (var item:* in array)
 			{
-				encodeValue(array[i]);
+				encodeValue(item);
 			}
 		}
 
@@ -233,9 +214,9 @@ package garbuz.serialization
 
 			encodeInt(type.index);
 
-			for each (var property:String in type.properties)
+			for each (var field:Field in type.fields)
 			{
-				encodeValue(object[property]);
+				encodeValue(field.getValue(object));
 			}
 		}
 

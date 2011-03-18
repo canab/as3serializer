@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CollectionsTest
@@ -30,8 +29,8 @@ public class CollectionsTest
 		arrayList.add(new SampleObject());
 
 		byte[] bytes = Serializer.encode(arrayList);
-		List result = (List) Serializer.decode(bytes);
-		Assert.assertArrayEquals(arrayList.get(0).arrayValue, ((SampleObject) result.get(0)).arrayValue);
+		Object[] result = (Object[]) Serializer.decode(bytes);
+		Assert.assertArrayEquals(arrayList.get(0).arrayValue, ((SampleObject) result[0]).arrayValue);
 	}
 
 	@Test
