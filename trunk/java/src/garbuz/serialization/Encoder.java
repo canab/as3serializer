@@ -33,6 +33,10 @@ final class Encoder
 		{
 			encodeInteger((Integer) value);
 		}
+		else if (value instanceof Long)
+		{
+			encodeInteger(((Long) value).intValue());
+		}
 		else if ((value instanceof Double) || (value instanceof Float))
 		{
 			encodeDouble((Double) value);

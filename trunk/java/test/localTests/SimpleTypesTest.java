@@ -29,6 +29,15 @@ public class SimpleTypesTest
 	}
 
 	@Test
+	public void testLong() throws Exception
+	{
+		Long value = 1L;
+		byte[] bytes = Serializer.encode(value);
+		Object result = Serializer.decode(bytes);
+		Assert.assertEquals(value.intValue(), result);
+	}
+
+	@Test
 	public void testDouble() throws Exception
 	{
 		testValue(0);
