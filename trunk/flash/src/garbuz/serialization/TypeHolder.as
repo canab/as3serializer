@@ -1,7 +1,7 @@
 package garbuz.serialization
 {
+	import flash.system.ApplicationDomain;
 	import flash.utils.describeType;
-	import flash.utils.getDefinitionByName;
 
 	internal final class TypeHolder
 	{
@@ -19,9 +19,24 @@ package garbuz.serialization
 
 		public function initialize():void
 		{
-			classRef = Class(getDefinitionByName(className));
+			classRef = getClassRef();
+
+			if (!classRef)
+				throw new Error("Class not found: " + className);
+
 			resolveFields();
 			initialized = true;
+		}
+
+		private function getClassRef():Class
+		{
+			for each(var domain:ApplicationDomain in Serializer.domains)
+			{
+				if (domain.hasDefinition(className))
+					return Class(domain.getDefinition(className))
+			}
+
+			return null;
 		}
 
 		private function resolveFields():void
