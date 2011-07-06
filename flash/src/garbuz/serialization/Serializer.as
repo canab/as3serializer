@@ -29,11 +29,17 @@ package garbuz.serialization
 
 		public static function registerDomain(domain:ApplicationDomain):void
 		{
+			if (!domain)
+				throw new Error("Domain cannot be null");
+
 			domains[domain] = domain;
 		}
 
 		public static function unregisterDomain(domain:ApplicationDomain):void
 		{
+			if (!domain)
+				throw new Error("Domain cannot be null");
+
 			delete domains[domain];
 		}
 
