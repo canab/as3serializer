@@ -1,10 +1,10 @@
 package
 {
+	import common.serialization.Serializer;
+
 	import flash.utils.ByteArray;
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
-
-	import garbuz.serialization.Serializer;
 
 	import org.flexunit.Assert;
 

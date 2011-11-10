@@ -1,15 +1,13 @@
 package
 {
+	import common.serialization.Serializer;
+
 	import data.SampleObject;
 
 	import flash.display.Sprite;
 	import flash.events.Event;
-
 	import flash.utils.ByteArray;
-
 	import flash.utils.getQualifiedClassName;
-
-	import garbuz.serialization.Serializer;
 
 	public class ProfilerTest extends Sprite
 	{

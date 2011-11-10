@@ -1,12 +1,12 @@
 package localTests
 {
+	import common.serialization.Serializer;
+
 	import data.OtherObject;
 	import data.SampleObject;
 
 	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
-
-	import garbuz.serialization.Serializer;
 
 	public class ObjectTest extends TestBase
 	{

@@ -1,8 +1,8 @@
 package servlet;
 
+import common.serialization.Serializer;
 import data.OtherObject;
 import data.SampleObject;
-import garbuz.serialization.Serializer;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 

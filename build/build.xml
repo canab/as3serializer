@@ -2,33 +2,21 @@
 
 	<property file="local.properties"/>
 
-	<taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask">
-		<classpath>
-			<pathelement location="lib/svnant.jar"/>
-			<pathelement location="lib/svnClientAdapter.jar"/>
-			<pathelement location="lib/svnjavahl.jar"/>
-			<pathelement location="lib/svnkit.jar"/>
-		</classpath>
-	</taskdef>
-
 	<target name="clean">
 		<delete dir="${output.dir}"/>
 		<mkdir dir="${output.dir}"/>
 	</target>
 
 	<target name="buildNumber">
-		<property name="build.number" value=""/>
-		<svn>
-			<status path=".." revisionProperty="build.number"/>
-		</svn>
-		<echo>revision #${build.number}</echo>
+		<buildnumber/>
+		<property name="version" value="${build.version}.${build.number}"/>
+		<echo>version ${version}</echo>
 	</target>
 
 	<target name="build" depends="clean, buildFlash, buildJava"/>
 
 	<target name="buildFlash" depends="buildNumber">
-		<!--property name="swc.name" value="serializer-r${build.number}.swc"/-->
-		<property name="swc.name" value="serializer.swc"/>
+		<property name="swc.name" value="serializer-${version}.swc"/>
 
 		<exec executable="${flex.sdk.dir}/bin/${compc.compiler}" failonerror="true">
 			<arg line="-debug=${build.debug}"/>
@@ -39,8 +27,7 @@
 	</target>
 
 	<target name="buildJava" depends="buildNumber">
-		<!--property name="jar.name" value="serializer-r${build.number}.jar"/-->
-		<property name="jar.name" value="serializer.jar"/>
+		<property name="jar.name" value="serializer-${version}.jar"/>
 		<property name="java.output.dir" value="${output.dir}/classes"/>
 
 		<mkdir dir="${java.output.dir}"/>

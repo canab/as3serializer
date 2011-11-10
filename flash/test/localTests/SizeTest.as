@@ -1,18 +1,13 @@
 package localTests
 {
+	import common.serialization.Serializer;
+
 	import data.SampleObject;
 
-	import flash.net.ObjectEncoding;
 	import flash.net.registerClassAlias;
-	import flash.sampler.Sample;
 	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
-
 	import flash.utils.getTimer;
-
-	import garbuz.serialization.Serializer;
-
-	import org.flexunit.asserts.assertEquals;
 
 	public class SizeTest extends TestBase
 	{

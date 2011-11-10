@@ -1,5 +1,7 @@
 package remoteTests
 {
+	import common.serialization.Serializer;
+
 	import data.OtherObject;
 	import data.SampleObject;
 
@@ -11,13 +13,7 @@ package remoteTests
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
-
 	import flash.utils.getQualifiedClassName;
-
-	import garbuz.serialization.Serializer;
-
-	import mx.utils.Base64Decoder;
-	import mx.utils.Base64Encoder;
 
 	import org.flexunit.async.Async;
 

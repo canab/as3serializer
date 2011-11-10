@@ -1,4 +1,4 @@
-package garbuz.serialization;
+package common.serialization;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;

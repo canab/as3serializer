@@ -1,4 +1,4 @@
-package garbuz.serialization
+package common.serialization
 {
 	import flash.utils.Dictionary;
 
