@@ -1,8 +1,8 @@
 package localTests;
 
+import common.serialization.Serializer;
 import data.OtherObject;
 import data.SampleObject;
-import garbuz.serialization.Serializer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

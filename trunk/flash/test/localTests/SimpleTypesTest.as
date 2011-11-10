@@ -1,8 +1,8 @@
 package localTests
 {
-	import flash.utils.ByteArray;
+	import common.serialization.Serializer;
 
-	import garbuz.serialization.Serializer;
+	import flash.utils.ByteArray;
 
 	import org.flexunit.asserts.assertEquals;
 

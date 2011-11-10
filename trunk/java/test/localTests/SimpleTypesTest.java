@@ -1,6 +1,6 @@
 package localTests;
 
-import garbuz.serialization.Serializer;
+import common.serialization.Serializer;
 import org.junit.Assert;
 import org.junit.Test;
 

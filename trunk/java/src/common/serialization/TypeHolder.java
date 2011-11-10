@@ -1,4 +1,4 @@
-package garbuz.serialization;
+package common.serialization;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

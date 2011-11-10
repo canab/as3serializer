@@ -1,4 +1,4 @@
-package garbuz.serialization;
+package common.serialization;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package garbuz.serialization
+package common.serialization
 {
 	internal final class Types
 	{
