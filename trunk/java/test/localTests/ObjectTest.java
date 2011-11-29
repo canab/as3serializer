@@ -1,6 +1,7 @@
 package localTests;
 
 import common.serialization.Serializer;
+import data.ObjectWithStaticField;
 import data.SampleObject;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -12,6 +13,7 @@ public class ObjectTest
 	public static void setUp()
 	{
 		Serializer.registerType(SampleObject.class.getName());
+		Serializer.registerType(ObjectWithStaticField.class.getName());
 	}
 
 	@Test(expected = Exception.class)
@@ -23,20 +25,29 @@ public class ObjectTest
 	@Test
 	public void testObject() throws Exception
 	{
-		doTest(new SampleObject());
+		SampleObject original = new SampleObject();
+		byte[] bytes = Serializer.encode(original);
+		SampleObject result = (SampleObject) Serializer.decode(bytes);
+
+		Assert.assertEquals(original.intValue, result.intValue);
+		Assert.assertEquals(original.numberValue, result.numberValue, 0.000001);
+		Assert.assertEquals(original.boolValue, result.boolValue);
+		Assert.assertEquals(original.stringValue, result.stringValue);
+		Assert.assertEquals(original.dateValue.getTime(), result.dateValue.getTime());
+		Assert.assertArrayEquals(original.mapValue.keySet().toArray(), result.mapValue.keySet().toArray());
+		Assert.assertArrayEquals(original.mapValue.values().toArray(), result.mapValue.values().toArray());
+		Assert.assertArrayEquals(original.arrayValue, result.arrayValue);
+
 	}
 
-	private void doTest(SampleObject value) throws Exception
+	@Test
+	public void testObjectWithStatic() throws Exception
 	{
-		byte[] bytes = Serializer.encode(value);
-		SampleObject result = (SampleObject) Serializer.decode(bytes);
-		Assert.assertEquals(value.intValue, result.intValue);
-		Assert.assertEquals(value.numberValue, result.numberValue, 0.000001);
-		Assert.assertEquals(value.boolValue, result.boolValue);
-		Assert.assertEquals(value.stringValue, result.stringValue);
-		Assert.assertEquals(value.dateValue.getTime(), result.dateValue.getTime());
-		Assert.assertArrayEquals(value.mapValue.keySet().toArray(), result.mapValue.keySet().toArray());
-		Assert.assertArrayEquals(value.mapValue.values().toArray(), result.mapValue.values().toArray());
-		Assert.assertArrayEquals(value.arrayValue, result.arrayValue);
+		ObjectWithStaticField original = new ObjectWithStaticField();
+		byte[] bytes = Serializer.encode(original);
+		ObjectWithStaticField result = (ObjectWithStaticField) Serializer.decode(bytes);
+
+		Assert.assertEquals(original.data, result.data);
 	}
+
 }
